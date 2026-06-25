@@ -60,3 +60,8 @@ templates/
 # Local configuration
 config.cfg
 local.cfg
+
+# Large audio files (>100MB) - download separately
+assets/audio/sfx/creature/horror_ambience_01.wav
+assets/audio/sfx/environment/Cave Room Tone SFX-04.wav
+assets/audio/sfx/environment/Cave Room Tone SFX-06.wav
