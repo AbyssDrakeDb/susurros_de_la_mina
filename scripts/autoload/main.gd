@@ -26,7 +26,7 @@ func _setup_environment() -> void:
 	env.background_color = Color(0.05, 0.05, 0.08)
 
 	# Tono
-	env.tonemap_mode = Environment.TONE_MAP_ACES
+	env.tonemap_mode = Environment.TONE_MAPPER_ACES
 
 	# Niebla
 	env.fog_enabled = true

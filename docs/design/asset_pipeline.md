@@ -46,32 +46,32 @@ Establecer un flujo de trabajo eficiente y consistente para integrar assets en e
 │  1. Selección   │  Buscar asset adecuado
 │     de Asset    │  Verificar licencia
 └────────┬────────┘
-         │
-         ▼
+		 │
+		 ▼
 ┌─────────────────┐
 │  2. Descarga    │  Descargar archivo
 │                 │  Verificar integridad
 └────────┬────────┘
-         │
-         ▼
+		 │
+		 ▼
 ┌─────────────────┐
 │  3. Conversión  │  Convertir a formato Godot
 │                 │  Optimizar si necesario
 └────────┬────────┘
-         │
-         ▼
+		 │
+		 ▼
 ┌─────────────────┐
 │  4. Organizar   │  Colocar en carpeta correcta
 │                 │  Renombrar si es necesario
 └────────┬────────┘
-         │
-         ▼
+		 │
+		 ▼
 ┌─────────────────┐
 │  5. Integrar    │  Importar en Godot
 │                 │  Configurar propiedades
 └────────┬────────┘
-         │
-         ▼
+		 │
+		 ▼
 ┌─────────────────┐
 │  6. Documentar  │  Registrar en CREDITS.md
 │                 │  Actualizar inventario
@@ -200,9 +200,9 @@ assets/
 │   ├── minerals/              # Animaciones de minerales
 │   └── creatures/             # Animaciones de criaturas
 └── data/
-    ├── items/                 # Resource files de items
-    ├── minerals/              # Datos de minerales
-    └── config/                # Configuraciones
+	├── items/                 # Resource files de items
+	├── minerals/              # Datos de minerales
+	└── config/                # Configuraciones
 ```
 
 ### Convenciones de Nombres
@@ -377,17 +377,17 @@ mesh_instance.material_override = material
 var mineral_pool: Array[MineralNode] = []
 
 func get_mineral() -> MineralNode:
-    if mineral_pool.size() > 0:
-        var mineral = mineral_pool.pop_back()
-        mineral.visible = true
-        mineral.set_deferred("monitoring", true)
-        return mineral
-    return mineral_scene.instantiate()
+	if mineral_pool.size() > 0:
+		var mineral = mineral_pool.pop_back()
+		mineral.visible = true
+		mineral.set_deferred("monitoring", true)
+		return mineral
+	return mineral_scene.instantiate()
 
 func return_mineral(mineral: MineralNode) -> void:
-    mineral.visible = false
-    mineral.set_deferred("monitoring", false)
-    mineral_pool.append(mineral)
+	mineral.visible = false
+	mineral.set_deferred("monitoring", false)
+	mineral_pool.append(mineral)
 ```
 
 ---
