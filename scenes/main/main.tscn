@@ -1,16 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://main_scene"]
+[gd_scene format=3 uid="uid://dy4maphc67dft"]
 
-[ext_resource type="Script" path="res://scripts/autoload/main.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://cdp5gnp3igspr" path="res://scripts/autoload/main.gd" id="1_main"]
 
-[node name="Main" type="Node3D"]
+[node name="Main" type="Node3D" unique_id=1997095742]
 script = ExtResource("1_main")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1555412290]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1065396594]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
 light_energy = 0.3
 shadow_enabled = true
 
-[node name="PlayerSpawn" type="Node3D" parent="."]
+[node name="PlayerSpawn" type="Node3D" parent="." unique_id=904612148]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)

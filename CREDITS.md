@@ -17,7 +17,7 @@ Este documento registra todos los assets de terceros utilizados en el proyecto.
 
 ---
 
-## Assets 3D (Pendientes de Descarga)
+## Assets 3D
 
 ### Free Low Poly Mining Assets
 - **Asset**: Free Low Poly Mining Assets
@@ -26,7 +26,7 @@ Este documento registra todos los assets de terceros utilizados en el proyecto.
 - **URL**: https://sketchfab.com/3d-models/free-low-poly-mining-assets-fb8c435dc8644a1ea4555f59a17313fc
 - **Uso**: Herramientas de minería, minerales, props
 - **Contenido**: 16 assets únicos (picos, gemas, barriles, etc.)
-- **Fecha de integración**: Pendiente
+- **Fecha de integración**: 25 de Junio, 2026
 
 ### Modular Caves
 - **Asset**: Modular Caves
@@ -35,7 +35,7 @@ Este documento registra todos los assets de terceros utilizados en el proyecto.
 - **URL**: https://sketchfab.com/3d-models/modular-caves-66d33b65d4fc471db78a7e4da2232623
 - **Uso**: Estructuras modulares de cueva
 - **Contenido**: 13 módulos diferentes
-- **Fecha de integración**: Pendiente
+- **Fecha de integración**: 25 de Junio, 2026
 
 ### Crystal Pack
 - **Asset**: Crystal Pack
@@ -44,27 +44,38 @@ Este documento registra todos los assets de terceros utilizados en el proyecto.
 - **URL**: https://poly.pizza/bundles/Crystal Pack
 - **Uso**: Cristales y minerales decorativos
 - **Contenido**: 28 modelos de cristales
-- **Fecha de integración**: Pendiente
+- **Fecha de integración**: 25 de Junio, 2026
 
 ---
 
-## Assets de Audio (Pendientes de Descarga)
+## Assets de Audio
 
-### Kenney Audio
-- **Asset**: Varios packs de audio
+### Kenney Interface Sounds
+- **Asset**: Interface Sounds
 - **Autor**: Kenney (https://kenney.nl)
 - **Licencia**: CC0 1.0 Universal (Dominio Público)
-- **URL**: https://kenney.nl/assets?q=audio
-- **Uso**: Efectos de sonido generales, UI, ambiente
-- **Fecha de integración**: Pendiente
+- **URL**: https://kenney.nl/assets/interface-sounds
+- **Uso**: Efectos de sonido de UI (clicks, confirmaciones, errores, etc.)
+- **Contenido**: 85 efectos de sonido
+- **Fecha de integración**: 25 de Junio, 2026
+
+### Kenney Impact Sounds
+- **Asset**: Impact Sounds
+- **Autor**: Kenney (https://kenney.nl)
+- **Licencia**: CC0 1.0 Universal (Dominio Público)
+- **URL**: https://kenney.nl/assets/impact-sounds
+- **Uso**: Impactos, pasos, efectos de materiales
+- **Contenido**: 115 efectos de sonido
+- **Fecha de integración**: 25 de Junio, 2026
 
 ### OpenGameArt Audio
 - **Asset**: CC0 Sound Effects
 - **Autor**: Varios artistas
 - **Licencia**: CC0 / CC-BY (varía por asset)
 - **URL**: https://opengameart.org/content/cc0-sound-effects
-- **Uso**: Efectos de sonido de minería, ambiente
-- **Fecha de integración**: Pendiente
+- **Uso**: Efectos de sonido de minería, ambiente, horror
+- **Contenido**: 145 archivos de audio (~396MB)
+- **Fecha de integración**: 25 de Junio, 2026
 
 ---
 
