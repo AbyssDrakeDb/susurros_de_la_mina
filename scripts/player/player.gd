@@ -3,7 +3,6 @@ class_name Player
 
 ## ─── Señales ──────────────────────────────────────────
 signal flashlight_toggled(is_on: bool)
-signal picked_up(item: Node3D)
 signal interacted(body: Node3D)
 signal mine_hit(body: Node3D)
 
@@ -12,7 +11,7 @@ signal mine_hit(body: Node3D)
 @export var sprint_speed: float = 8.0
 @export var jump_velocity: float = 4.5
 @export var mouse_sensitivity: float = 0.002
-@export var gravity: float = 9.8
+@export var gravity: float = 20.0
 
 ## ─── Nodos ────────────────────────────────────────────
 @onready var head: Node3D = $Head
@@ -24,8 +23,6 @@ signal mine_hit(body: Node3D)
 var flashlight_on: bool = true
 var flashlight_battery: float = 100.0
 var is_sprinting: bool = false
-var current_tool: String = "pickaxe"
-var _gravity_velocity: float = 0.0
 var _head_bob_time: float = 0.0
 
 ## ─── Constantes ───────────────────────────────────────
@@ -34,18 +31,12 @@ const HEAD_BOB_SPEED_WALK: float = 8.0
 const HEAD_BOB_SPEED_SPRINT: float = 10.0
 const HEAD_BOB_AMOUNT_WALK: float = 0.03
 const HEAD_BOB_AMOUNT_SPRINT: float = 0.05
-const HEAD_BOB_LERP: float = 10.0
 
 ## ─── Godot Callbacks ──────────────────────────────────
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-	GameState.health_changed.connect(_on_health_changed)
-	GameState.change_phase(GameState.GamePhase.PLAYING)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if GameState.current_phase != GameState.GamePhase.PLAYING:
-		return
-	
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
@@ -58,34 +49,21 @@ func _unhandled_input(event: InputEvent) -> void:
 		_toggle_flashlight()
 	
 	if event.is_action_pressed("mine"):
-		try_mine()
+		_try_mine()
 
 func _physics_process(delta: float) -> void:
 	if GameState.current_phase != GameState.GamePhase.PLAYING:
 		return
 	
-	_apply_gravity(delta)
-	_handle_jump()
-	_handle_movement(delta)
-	move_and_slide()
-	_update_head_bob(delta)
-	_update_flashlight(delta)
-	_check_interaction()
-
-## ─── Gravedad ─────────────────────────────────────────
-func _apply_gravity(delta: float) -> void:
+	# Gravedad
 	if not is_on_floor():
-		_gravity_velocity -= gravity * delta
-	else:
-		_gravity_velocity = 0.0
-
-## ─── Salto ────────────────────────────────────────────
-func _handle_jump() -> void:
+		velocity.y -= gravity * delta
+	
+	# Salto
 	if Input.is_action_just_pressed("jump") and is_on_floor():
-		_gravity_velocity = jump_velocity
-
-## ─── Movimiento ───────────────────────────────────────
-func _handle_movement(_delta: float) -> void:
+		velocity.y = jump_velocity
+	
+	# Movimiento
 	is_sprinting = Input.is_action_pressed("sprint")
 	var current_speed: float = sprint_speed if is_sprinting else speed
 	
@@ -99,25 +77,19 @@ func _handle_movement(_delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0.0, current_speed)
 		velocity.z = move_toward(velocity.z, 0.0, current_speed)
 	
-	velocity.y = _gravity_velocity
-
-## ─── Head Bob ─────────────────────────────────────────
-func _update_head_bob(delta: float) -> void:
-	if velocity.length() > 0.1 and is_on_floor():
-		var bob_speed: float = HEAD_BOB_SPEED_SPRINT if is_sprinting else HEAD_BOB_SPEED_WALK
-		var bob_amount: float = HEAD_BOB_AMOUNT_SPRINT if is_sprinting else HEAD_BOB_AMOUNT_WALK
-		_head_bob_time += delta * bob_speed
-		var target_y: float = sin(_head_bob_time) * bob_amount
-		head.position.y = lerp(head.position.y, target_y, delta * HEAD_BOB_LERP)
-	else:
-		head.position.y = lerp(head.position.y, 0.0, delta * HEAD_BOB_LERP)
+	move_and_slide()
+	
+	# Head bob
+	_update_head_bob(delta)
+	
+	# Flashlight
+	_update_flashlight(delta)
 
 ## ─── Linterna ─────────────────────────────────────────
 func _toggle_flashlight() -> void:
 	flashlight_on = !flashlight_on
 	flashlight.visible = flashlight_on
 	flashlight_toggled.emit(flashlight_on)
-	AudioManager.play_sfx(preload("res://assets/audio/sfx/ui/toggle_001.ogg"))
 
 func _update_flashlight(delta: float) -> void:
 	if flashlight_on:
@@ -127,28 +99,24 @@ func _update_flashlight(delta: float) -> void:
 			_toggle_flashlight()
 		flashlight.light_energy = lerpf(0.3, 1.0, flashlight_battery / 100.0)
 
-func recharge_flashlight(amount: float) -> void:
-	flashlight_battery = minf(flashlight_battery + amount, 100.0)
-
-## ─── Interacción ──────────────────────────────────────
-func _check_interaction() -> void:
-	if interaction_ray.is_colliding():
-		var collider: Node3D = interaction_ray.get_collider()
-		if collider and collider.has_method("interact"):
-			if Input.is_action_just_pressed("interact"):
-				collider.interact(self)
-				interacted.emit(collider)
+## ─── Head Bob ─────────────────────────────────────────
+func _update_head_bob(delta: float) -> void:
+	if velocity.length() > 0.1 and is_on_floor():
+		var bob_speed: float = HEAD_BOB_SPEED_SPRINT if is_sprinting else HEAD_BOB_SPEED_WALK
+		var bob_amount: float = HEAD_BOB_AMOUNT_SPRINT if is_sprinting else HEAD_BOB_AMOUNT_WALK
+		_head_bob_time += delta * bob_speed
+		var target_y: float = sin(_head_bob_time) * bob_amount
+		head.position.y = lerp(head.position.y, target_y, delta * 10.0)
+	else:
+		head.position.y = lerp(head.position.y, 0.0, delta * 10.0)
 
 ## ─── Minado ───────────────────────────────────────────
-func try_mine() -> bool:
+func _try_mine() -> void:
 	if interaction_ray.is_colliding():
 		var collider: Node3D = interaction_ray.get_collider()
 		if collider and collider.has_method("take_damage"):
-			collider.take_damage(25)
+			collider.take_damage(25, "pickaxe_basic")
 			mine_hit.emit(collider)
-			AudioManager.play_sfx_varied(preload("res://assets/audio/sfx/mining/impactMining_000.ogg"))
-			return true
-	return false
 
 ## ─── Pausa ────────────────────────────────────────────
 func _toggle_pause() -> void:
@@ -160,12 +128,3 @@ func _toggle_pause() -> void:
 		GameState.change_phase(GameState.GamePhase.PLAYING)
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		get_tree().paused = false
-
-## ─── Callbacks de GameState ────────────────────────────
-func _on_health_changed(new_health: int) -> void:
-	if new_health <= 0:
-		die()
-
-func die() -> void:
-	GameState.change_phase(GameState.GamePhase.GAME_OVER)
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

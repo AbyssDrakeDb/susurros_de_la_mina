@@ -13,7 +13,7 @@ extends Node3D
 func _ready() -> void:
 	print("[Main] Iniciando Susurros de la Mina...")
 	_setup_environment()
-	GameState.change_phase(GameState.GamePhase.MENU)
+	GameState.change_phase(GameState.GamePhase.PLAYING)
 
 ## ─── Métodos Privados ────────────────────────────────
 
