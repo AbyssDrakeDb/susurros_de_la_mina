@@ -27,6 +27,7 @@ var flashlight_battery: float = 100.0
 var is_sprinting: bool = false
 var _head_bob_time: float = 0.0
 var _head_bob_offset: float = 0.0
+var is_paused: bool = false
 
 ## ─── Constantes ───────────────────────────────────────
 const FLASHLIGHT_DRAIN_RATE: float = 2.0
@@ -37,27 +38,30 @@ const HEAD_BOB_AMOUNT_SPRINT: float = 0.05
 
 ## ─── Godot Callbacks ──────────────────────────────────
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _input(event: InputEvent) -> void:
-	# Mouse look - siempre activo cuando el mouse está capturado
-	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+	# Mouse look - siempre activo
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED and not is_paused:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
 		head.rotation.x = clampf(head.rotation.x, -PI / 2.0, PI / 2.0)
-
-func _unhandled_input(event: InputEvent) -> void:
+	
+	# Pausa - funciona incluso cuando el árbol está pausado
 	if event.is_action_pressed("ui_cancel"):
 		_toggle_pause()
 	
-	if event.is_action_pressed("toggle_flashlight"):
-		_toggle_flashlight()
-	
-	if event.is_action_pressed("mine"):
+	# Minado - en _input para que funcione con click
+	if event.is_action_pressed("mine") and not is_paused:
 		_try_mine()
+	
+	# Linterna
+	if event.is_action_pressed("toggle_flashlight") and not is_paused:
+		_toggle_flashlight()
 
 func _physics_process(delta: float) -> void:
-	if GameState.current_phase != GameState.GamePhase.PLAYING:
+	if is_paused:
 		return
 	
 	# Gravedad
@@ -125,17 +129,25 @@ func _update_head_bob(delta: float) -> void:
 func _try_mine() -> void:
 	if interaction_ray.is_colliding():
 		var collider: Node3D = interaction_ray.get_collider()
+		print("[Player] Mining: ", collider.name)
 		if collider and collider.has_method("take_damage"):
 			collider.take_damage(25, "pickaxe_basic")
 			mine_hit.emit(collider)
+			print("[Player] Damage applied to: ", collider.name)
+		else:
+			print("[Player] Collider has no take_damage method")
 
 ## ─── Pausa ────────────────────────────────────────────
 func _toggle_pause() -> void:
-	if GameState.current_phase == GameState.GamePhase.PLAYING:
-		GameState.change_phase(GameState.GamePhase.PAUSED)
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-		get_tree().paused = true
-	elif GameState.current_phase == GameState.GamePhase.PAUSED:
+	if is_paused:
+		is_paused = false
 		GameState.change_phase(GameState.GamePhase.PLAYING)
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		get_tree().paused = false
+		print("[Player] Unpaused")
+	else:
+		is_paused = true
+		GameState.change_phase(GameState.GamePhase.PAUSED)
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		get_tree().paused = true
+		print("[Player] Paused")
