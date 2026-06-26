@@ -9,9 +9,11 @@ signal mine_hit(body: Node3D)
 ## ─── Configuración ───────────────────────────────────
 @export var speed: float = 5.0
 @export var sprint_speed: float = 8.0
-@export var jump_velocity: float = 4.5
-@export var mouse_sensitivity: float = 0.002
+@export var jump_velocity: float = 5.0
+@export var mouse_sensitivity: float = 0.003
 @export var gravity: float = 20.0
+@export var acceleration: float = 10.0
+@export var deceleration: float = 8.0
 
 ## ─── Nodos ────────────────────────────────────────────
 @onready var head: Node3D = $Head
@@ -24,6 +26,7 @@ var flashlight_on: bool = true
 var flashlight_battery: float = 100.0
 var is_sprinting: bool = false
 var _head_bob_time: float = 0.0
+var _head_bob_offset: float = 0.0
 
 ## ─── Constantes ───────────────────────────────────────
 const FLASHLIGHT_DRAIN_RATE: float = 2.0
@@ -36,12 +39,14 @@ const HEAD_BOB_AMOUNT_SPRINT: float = 0.05
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	# Mouse look - siempre activo cuando el mouse está capturado
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
 		head.rotation.x = clampf(head.rotation.x, -PI / 2.0, PI / 2.0)
-	
+
+func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		_toggle_pause()
 	
@@ -63,19 +68,21 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_velocity
 	
-	# Movimiento
+	# Movimiento con aceleración suave
 	is_sprinting = Input.is_action_pressed("sprint")
-	var current_speed: float = sprint_speed if is_sprinting else speed
+	var target_speed: float = sprint_speed if is_sprinting else speed
 	
 	var input_dir: Vector2 = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 	var direction: Vector3 = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
+	var target_velocity: Vector3 = direction * target_speed
+	
 	if direction != Vector3.ZERO:
-		velocity.x = direction.x * current_speed
-		velocity.z = direction.z * current_speed
+		velocity.x = lerp(velocity.x, target_velocity.x, acceleration * delta)
+		velocity.z = lerp(velocity.z, target_velocity.z, acceleration * delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0.0, current_speed)
-		velocity.z = move_toward(velocity.z, 0.0, current_speed)
+		velocity.x = move_toward(velocity.x, 0.0, deceleration * delta)
+		velocity.z = move_toward(velocity.z, 0.0, deceleration * delta)
 	
 	move_and_slide()
 	
@@ -101,14 +108,18 @@ func _update_flashlight(delta: float) -> void:
 
 ## ─── Head Bob ─────────────────────────────────────────
 func _update_head_bob(delta: float) -> void:
-	if velocity.length() > 0.1 and is_on_floor():
+	var is_moving: bool = velocity.length() > 0.5 and is_on_floor()
+	
+	if is_moving:
 		var bob_speed: float = HEAD_BOB_SPEED_SPRINT if is_sprinting else HEAD_BOB_SPEED_WALK
 		var bob_amount: float = HEAD_BOB_AMOUNT_SPRINT if is_sprinting else HEAD_BOB_AMOUNT_WALK
 		_head_bob_time += delta * bob_speed
-		var target_y: float = sin(_head_bob_time) * bob_amount
-		head.position.y = lerp(head.position.y, target_y, delta * 10.0)
+		_head_bob_offset = sin(_head_bob_time) * bob_amount
 	else:
-		head.position.y = lerp(head.position.y, 0.0, delta * 10.0)
+		_head_bob_time = 0.0
+		_head_bob_offset = lerp(_head_bob_offset, 0.0, delta * 8.0)
+	
+	head.position.y = lerp(head.position.y, _head_bob_offset, delta * 10.0)
 
 ## ─── Minado ───────────────────────────────────────────
 func _try_mine() -> void:
