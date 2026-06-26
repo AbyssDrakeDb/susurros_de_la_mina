@@ -1,8 +1,17 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/autoload/main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3"]
+[ext_resource type="Script" path="res://scripts/minerals/mineral_node.gd" id="4"]
+
+[sub_resource type="PlaneShape3D" id="PlaneShape3D_floor"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(50, 50)
+
+[sub_resource type="StandardMaterial3D" id="Mat_floor"]
+albedo_color = Color(0.3, 0.35, 0.3, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_copper"]
 size = Vector3(0.5, 0.5, 0.5)
@@ -10,11 +19,17 @@ size = Vector3(0.5, 0.5, 0.5)
 [sub_resource type="BoxMesh" id="BoxMesh_copper"]
 size = Vector3(0.5, 0.5, 0.5)
 
+[sub_resource type="StandardMaterial3D" id="Mat_copper"]
+albedo_color = Color(0.8, 0.4, 0.2, 1)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_iron"]
 size = Vector3(0.5, 0.5, 0.5)
 
 [sub_resource type="BoxMesh" id="BoxMesh_iron"]
 size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="Mat_iron"]
+albedo_color = Color(0.5, 0.5, 0.55, 1)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1")
@@ -23,32 +38,83 @@ script = ExtResource("1")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
-light_energy = 0.3
+light_energy = 1.0
 shadow_enabled = true
 
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+light_energy = 0.5
+omni_range = 30.0
+
+[node name="Floor" type="StaticBody3D" parent="."]
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("PlaneShape3D_floor")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("PlaneMesh_floor")
+surface_material_override/0 = SubResource("Mat_floor")
+
 [node name="Player" parent="." instance=ExtResource("2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
 
 [node name="HUD" parent="." instance=ExtResource("3")]
 
 [node name="TestMinerals" type="Node3D" parent="."]
 
 [node name="CopperMineral1" type="StaticBody3D" parent="TestMinerals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 1, -3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.75, -3)
 collision_layer = 4
+script = ExtResource("4")
+mineral_type = "copper"
+max_health = 100
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TestMinerals/CopperMineral1"]
 shape = SubResource("BoxShape3D_copper")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="TestMinerals/CopperMineral1"]
 mesh = SubResource("BoxMesh_copper")
+surface_material_override/0 = SubResource("Mat_copper")
 
 [node name="IronMineral1" type="StaticBody3D" parent="TestMinerals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1, -3)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.75, -3)
 collision_layer = 4
+script = ExtResource("4")
+mineral_type = "iron"
+max_health = 150
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TestMinerals/IronMineral1"]
 shape = SubResource("BoxShape3D_iron")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="TestMinerals/IronMineral1"]
 mesh = SubResource("BoxMesh_iron")
+surface_material_override/0 = SubResource("Mat_iron")
+
+[node name="GoldMineral1" type="StaticBody3D" parent="TestMinerals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -5)
+collision_layer = 4
+script = ExtResource("4")
+mineral_type = "gold"
+max_health = 200
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestMinerals/GoldMineral1"]
+shape = SubResource("BoxShape3D_copper")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestMinerals/GoldMineral1"]
+mesh = SubResource("BoxMesh_copper")
+surface_material_override/0 = SubResource("Mat_copper")
+
+[node name="CrystalMineral1" type="StaticBody3D" parent="TestMinerals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.75, -5)
+collision_layer = 4
+script = ExtResource("4")
+mineral_type = "crystal"
+max_health = 300
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TestMinerals/CrystalMineral1"]
+shape = SubResource("BoxShape3D_copper")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="TestMinerals/CrystalMineral1"]
+mesh = SubResource("BoxMesh_copper")
+surface_material_override/0 = SubResource("Mat_copper")

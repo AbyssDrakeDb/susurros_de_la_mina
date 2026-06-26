@@ -54,6 +54,8 @@ func get_info() -> Dictionary:
 
 ## ─── Private Methods ──────────────────────────────────
 func _setup_visual() -> void:
+	if mesh.get_surface_override_material(0) != null:
+		return
 	var material: StandardMaterial3D = StandardMaterial3D.new()
 	material.albedo_color = _get_mineral_color()
 	mesh.material_override = material
