@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://player001"]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/player/player.gd" id="1"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+radius = 0.35
+height = 1.8
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1")
@@ -8,7 +12,7 @@ collision_layer = 2
 collision_mask = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape3D_player")
+shape = SubResource("CapsuleShape3D_1")
 
 [node name="Head" type="Node3D" parent="."]
 
@@ -19,7 +23,6 @@ fov = 70.0
 far = 100.0
 
 [node name="Flashlight" type="SpotLight3D" parent="Head"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 light_color = Color(1, 0.95, 0.8, 1)
 light_energy = 1.0
 spot_angle = 45.0
@@ -30,7 +33,3 @@ shadow_enabled = true
 target_position = Vector3(0, 0, -3)
 collision_mask = 4
 collide_with_areas = true
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
-radius = 0.35
-height = 1.8
