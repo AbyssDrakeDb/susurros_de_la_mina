@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/minerals/mineral_node.gd" id="1"]
 
@@ -7,6 +7,18 @@ size = Vector3(0.5, 0.5, 0.5)
 
 [sub_resource type="BoxMesh" id="BoxMesh_1"]
 size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_healthbar"]
+size = Vector2(0.6, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="Mat_healthbar_bg"]
+albedo_color = Color(0.2, 0.2, 0.2, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_healthfill"]
+size = Vector2(0.58, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="Mat_healthfill"]
+albedo_color = Color(0.2, 0.8, 0.2, 1)
 
 [node name="MineralNode" type="StaticBody3D"]
 script = ExtResource("1")
@@ -17,3 +29,22 @@ shape = SubResource("BoxShape3D_1")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_1")
+
+[node name="HealthBar3D" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+
+[node name="HealthBarBG" type="MeshInstance3D" parent="HealthBar3D"]
+mesh = SubResource("PlaneMesh_healthbar")
+surface_material_override/0 = SubResource("Mat_healthbar_bg")
+
+[node name="HealthFill" type="MeshInstance3D" parent="HealthBar3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.001)
+mesh = SubResource("PlaneMesh_healthfill")
+surface_material_override/0 = SubResource("Mat_healthfill")
+
+[node name="HealthLabel" type="Label3D" parent="HealthBar3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+pixel_size = 0.005
+font_size = 16
+text = "100 / 100"
+modulate = Color(1, 1, 1, 0.9)

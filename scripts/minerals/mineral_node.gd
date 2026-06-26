@@ -18,11 +18,14 @@ var is_depleted: bool = false
 
 ## ─── Visual Feedback ─────────────────────────────────
 @onready var mesh: MeshInstance3D = $MeshInstance3D
+@onready var health_bar_3d: Node3D = $HealthBar3D
+@onready var health_fill: MeshInstance3D = $HealthBar3D/HealthFill
+@onready var health_label: Label3D = $HealthBar3D/HealthLabel
 
 ## ─── Godot Callbacks ──────────────────────────────────
 func _ready() -> void:
 	current_health = max_health
-	_setup_visual()
+	_update_health_bar()
 
 ## ─── Public Methods ───────────────────────────────────
 func take_damage(amount: int, tool_type: String = "pickaxe") -> void:
@@ -36,6 +39,7 @@ func take_damage(amount: int, tool_type: String = "pickaxe") -> void:
 	health_changed.emit(current_health)
 	
 	_play_hit_animation()
+	_update_health_bar()
 	
 	var actual_yield: int = randi_range(yield_amount.x, yield_amount.y)
 	mined.emit(self, actual_yield)
@@ -53,21 +57,33 @@ func get_info() -> Dictionary:
 	}
 
 ## ─── Private Methods ──────────────────────────────────
-func _setup_visual() -> void:
-	if mesh.get_surface_override_material(0) != null:
+func _update_health_bar() -> void:
+	if health_bar_3d == null:
 		return
-	var material: StandardMaterial3D = StandardMaterial3D.new()
-	material.albedo_color = _get_mineral_color()
-	mesh.material_override = material
-
-func _get_mineral_color() -> Color:
-	match mineral_type:
-		"copper": return Color(0.8, 0.4, 0.2)
-		"iron": return Color(0.5, 0.5, 0.5)
-		"silver": return Color(0.8, 0.8, 0.9)
-		"gold": return Color(1.0, 0.84, 0.0)
-		"crystal": return Color(0.4, 0.8, 1.0)
-		_: return Color.WHITE
+	
+	var health_percent: float = float(current_health) / float(max_health)
+	
+	# Escalar barra de vida
+	if health_fill:
+		health_fill.scale.x = health_percent
+	
+	# Cambiar color según salud
+	if health_fill:
+		var mat: StandardMaterial3D = health_fill.get_surface_override_material(0)
+		if mat == null:
+			mat = StandardMaterial3D.new()
+			health_fill.material_override = mat
+		
+		if health_percent > 0.6:
+			mat.albedo_color = Color(0.2, 0.8, 0.2)  # Verde
+		elif health_percent > 0.3:
+			mat.albedo_color = Color(0.8, 0.8, 0.2)  # Amarillo
+		else:
+			mat.albedo_color = Color(0.8, 0.2, 0.2)  # Rojo
+	
+	# Actualizar label
+	if health_label:
+		health_label.text = "%d / %d" % [current_health, max_health]
 
 func _get_tool_modifier(tool_type: String) -> float:
 	match tool_type:
@@ -85,5 +101,6 @@ func _destroy() -> void:
 	is_depleted = true
 	destroyed.emit(self)
 	mesh.visible = false
+	if health_bar_3d:
+		health_bar_3d.visible = false
 	set_deferred("collision_layer", 0)
-	AudioManager.play_sfx_varied(preload("res://assets/audio/sfx/mining/impactMining_002.ogg"))
