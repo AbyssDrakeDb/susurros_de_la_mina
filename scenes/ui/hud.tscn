@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hotbar.tscn" id="2"]
 
 [node name="HUD" type="CanvasLayer"]
 layer = 10
@@ -61,3 +62,5 @@ grow_vertical = 2
 layout_mode = 2
 custom_minimum_size = Vector2(4, 4)
 color = Color(1, 1, 1, 0.8)
+
+[node name="Hotbar" parent="." instance=ExtResource("2")]

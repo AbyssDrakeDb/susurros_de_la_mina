@@ -12,16 +12,19 @@ signal health_changed(new_health: int)
 @export var yield_amount: Vector2i = Vector2i(1, 3)
 @export var rarity: float = 1.0
 
+## ─── Distancia para mostrar/ocultar label ─────────────
+@export var label_show_distance: float = 3.0
+@export var label_hide_distance: float = 1.5
+
 ## ─── State ────────────────────────────────────────────
 var current_health: int
 var is_depleted: bool = false
 
 ## ─── Materiales únicos por instancia ──────────────────
 var _body_material: StandardMaterial3D
-var _healthbar_bg_material: StandardMaterial3D
 var _healthbar_fill_material: StandardMaterial3D
 
-## ─── Visual Feedback ─────────────────────────────────
+## ─── Referencias ─────────────────────────────────────
 @onready var mesh: MeshInstance3D = $MeshInstance3D
 @onready var health_bar_3d: Node3D = $HealthBar3D
 @onready var health_fill: MeshInstance3D = $HealthBar3D/HealthFill
@@ -40,31 +43,85 @@ const MINERAL_COLORS: Dictionary = {
 func _ready() -> void:
 	current_health = max_health
 	_create_unique_materials()
-	_apply_colors()
+	_update_health_bar()
+	if health_label:
+		health_label.visible = false
+
+func _process(_delta: float) -> void:
+	if is_depleted or health_label == null:
+		return
+	
+	var player: Node3D = get_tree().get_first_node_in_group("player")
+	if player == null:
+		health_label.visible = false
+		return
+	
+	var dist: float = global_position.distance_to(player.global_position)
+	health_label.visible = dist <= label_show_distance and dist >= label_hide_distance
 
 ## ─── Private Methods ──────────────────────────────────
 func _create_unique_materials() -> void:
-	# Material único para el cuerpo del mineral
 	_body_material = StandardMaterial3D.new()
 	_body_material.albedo_color = MINERAL_COLORS.get(mineral_type, Color.WHITE)
 	mesh.material_override = _body_material
 	
-	# Material único para el fondo de la barra de vida
-	_healthbar_bg_material = StandardMaterial3D.new()
-	_healthbar_bg_material.albedo_color = Color(0.15, 0.15, 0.15)
-	if health_bar_3d:
-		var bg: MeshInstance3D = health_bar_3d.get_node_or_null("HealthBarBG")
-		if bg:
-			bg.material_override = _healthbar_bg_material
-	
-	# Material único para el fill de la barra de vida
 	_healthbar_fill_material = StandardMaterial3D.new()
 	_healthbar_fill_material.albedo_color = Color(0.2, 0.8, 0.2)
 	if health_fill:
 		health_fill.material_override = _healthbar_fill_material
+	
+	if health_bar_3d:
+		var bg: MeshInstance3D = health_bar_3d.get_node_or_null("HealthBarBG")
+		if bg:
+			var bg_mat: StandardMaterial3D = StandardMaterial3D.new()
+			bg_mat.albedo_color = Color(0.1, 0.1, 0.1)
+			bg.material_override = bg_mat
 
-func _apply_colors() -> void:
-	_update_health_bar()
+func _update_health_bar() -> void:
+	if health_bar_3d == null or _healthbar_fill_material == null:
+		return
+	
+	var health_percent: float = float(current_health) / float(max_health)
+	
+	if health_fill:
+		health_fill.scale.x = maxf(health_percent, 0.001)
+		health_fill.position.x = -0.2 * (1.0 - health_percent)
+	
+	if health_percent > 0.6:
+		_healthbar_fill_material.albedo_color = Color(0.2, 0.8, 0.2)
+	elif health_percent > 0.3:
+		_healthbar_fill_material.albedo_color = Color(0.8, 0.8, 0.2)
+	else:
+		_healthbar_fill_material.albedo_color = Color(0.8, 0.2, 0.2)
+	
+	if health_label:
+		health_label.text = "%d" % current_health
+
+func _get_tool_modifier(tool_type: String) -> float:
+	match tool_type:
+		"pickaxe_basic": return 1.0
+		"pickaxe_reinforced": return 1.5
+		"drill": return 2.0
+		_: return 1.0
+
+func _play_hit_animation() -> void:
+	if _body_material:
+		_body_material.emission_enabled = true
+		_body_material.emission = Color.WHITE
+		_body_material.emission_energy_multiplier = 3.0
+		var tween: Tween = create_tween()
+		tween.tween_interval(0.08)
+		tween.tween_callback(func():
+			if _body_material:
+				_body_material.emission_energy_multiplier = 0.0
+		)
+	
+	if health_bar_3d:
+		var original_pos: Vector3 = health_bar_3d.position
+		var tween_bar: Tween = create_tween()
+		tween_bar.tween_property(health_bar_3d, "position:x", original_pos.x + 0.02, 0.03)
+		tween_bar.tween_property(health_bar_3d, "position:x", original_pos.x - 0.02, 0.03)
+		tween_bar.tween_property(health_bar_3d, "position:x", original_pos.x, 0.03)
 
 ## ─── Public Methods ───────────────────────────────────
 func take_damage(amount: int, tool_type: String = "pickaxe") -> void:
@@ -95,52 +152,11 @@ func get_info() -> Dictionary:
 		"depleted": is_depleted
 	}
 
-func _update_health_bar() -> void:
-	if health_bar_3d == null or _healthbar_fill_material == null:
-		return
-	
-	var health_percent: float = float(current_health) / float(max_health)
-	
-	# Escalar barra de fill
-	if health_fill:
-		health_fill.scale.x = maxf(health_percent, 0.001)
-	
-	# Cambiar color del fill (material ya es único por instancia)
-	if health_percent > 0.6:
-		_healthbar_fill_material.albedo_color = Color(0.2, 0.8, 0.2)
-	elif health_percent > 0.3:
-		_healthbar_fill_material.albedo_color = Color(0.8, 0.8, 0.2)
-	else:
-		_healthbar_fill_material.albedo_color = Color(0.8, 0.2, 0.2)
-	
-	# Actualizar label
-	if health_label:
-		health_label.text = "%d / %d" % [current_health, max_health]
-
-func _get_tool_modifier(tool_type: String) -> float:
-	match tool_type:
-		"pickaxe_basic": return 1.0
-		"pickaxe_reinforced": return 1.5
-		"drill": return 2.0
-		_: return 1.0
-
-func _play_hit_animation() -> void:
-	if _body_material:
-		var original_color: Color = MINERAL_COLORS.get(mineral_type, Color.WHITE)
-		_body_material.emission_enabled = true
-		_body_material.emission = Color.WHITE
-		_body_material.emission_energy_multiplier = 2.0
-		var tween: Tween = create_tween()
-		tween.tween_interval(0.1)
-		tween.tween_callback(func(): _body_material.emission_energy_multiplier = 0.0)
-	
-	var tween_pos: Tween = create_tween()
-	tween_pos.tween_property(mesh, "position:x", mesh.position.x + 0.05, 0.05)
-	tween_pos.tween_property(mesh, "position:x", mesh.position.x, 0.05)
-
 func _destroy() -> void:
 	is_depleted = true
 	destroyed.emit(self)
+	if health_bar_3d:
+		health_bar_3d.visible = false
 	var tween: Tween = create_tween()
-	tween.tween_property(mesh, "scale", Vector3.ZERO, 0.2)
+	tween.tween_property(mesh, "scale", Vector3.ZERO, 0.15)
 	tween.tween_callback(queue_free)

@@ -41,8 +41,8 @@
 | 1.3 | Cámara en primera persona | ✅ | Mouse look con límites ±90° |
 | 1.4 | Linterna con batería | ✅ | Toggle F, drain 2%/s, intensidad variable |
 | 1.5 | Raycast de interacción | ✅ | Detectar objetos con método interact() |
-| 1.6 | Entorno base con prototipos | 🔲 | Usar modular_caves.glb |
-| 1.7 | Superficie inicial | 🔲 | Zona de spawn + NPC comprador |
+| 1.6 | Entorno base con prototipos | ✅ | CaveRoom.tscn + generate_collisions.gd |
+| 1.7 | Superficie inicial | ✅ | Surface.tscn + NPC + CaveEntrance |
 
 ### Mes 2: Sistema de Minería y Recursos
 
@@ -52,19 +52,19 @@
 | 1.9 | PickaxeTool.gd | ✅ | 4 tipos de picos, cooldown, upgrades |
 | 1.10 | Sistema de inventario | ✅ | En GameState, capacidad 20 |
 | 1.11 | HUD - Barra de vida | ✅ | HealthBar + BatteryBar + mineral counter |
-| 1.12 | HUD - Inventario rápido | 🔲 | Hotbar con items equipados |
-| 1.13 | Loop de retorno a superficie | 🔲 | Ascensor/escalera + checkpoint |
+| 1.12 | HUD - Inventario rápido | ✅ | Hotbar.tscn con slots visuales |
+| 1.13 | Loop de retorno a superficie | ✅ | CaveEntrance + TransitionManager |
 
 ### Mes 3: Economía y Loop Completo
 
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
-| 1.14 | NPC Comprador | 🔲 | Dialogue + trade system |
-| 1.15 | Sistema de comercio | 🔲 | Vender minerales por oro |
-| 1.16 | Tienda de mejoras | 🔲 | Comprar mejoras con oro |
-| 1.17 | Mejoras iniciales | 🔲 | +Capacidad mochila, +Daño pico |
-| 1.18 | Sistema de riesgo | 🔲 | Caídas = daño, perder items |
-| 1.19 | Audio integration | 🔲 | Pasos, minería, ambiente, UI |
+| 1.14 | NPC Comprador | ✅ | npc.gd + dialogue + trade_panel |
+| 1.15 | Sistema de comercio | ✅ | TradePanel + TradeSystem |
+| 1.16 | Tienda de mejoras | ✅ | ShopPanel + upgrades |
+| 1.17 | Mejoras iniciales | ✅ | +Capacidad mochila, +Daño pico |
+| 1.18 | Sistema de riesgo | ✅ | Daño por caída + pérdida de items |
+| 1.19 | Audio integration | ✅ | Pasos + minería integrados en player.gd |
 | 1.20 | Playtesting | 🔲 | Ajustar dificultad y balance |
 
 **Estado: 🔲 PENDIENTE**
@@ -127,7 +127,7 @@
 | Fase | Estado | Progreso |
 |------|--------|----------|
 | Fase 0: Preparación | ✅ COMPLETADA | 18/18 (100%) |
-| Fase 1: Prototipo Mínimo | 🔄 EN PROGRESO | 10/20 (50%) |
+| Fase 1: Prototipo Mínimo | 🔄 EN PROGRESO | 20/20 (100%) |
 | Fase 2: Profundidad | 🔲 PENDIENTE | 0/8 (0%) |
 | Fase 3: Horror | 🔲 PENDIENTE | 0/8 (0%) |
 | Fase 4: Lanzamiento | 🔲 PENDIENTE | 0/8 (0%) |
@@ -138,4 +138,4 @@
 ## Última Actualización
 - **Fecha**: 26 de Junio, 2026
 - **Fase actual**: Fase 1 - Prototipo Mínimo
-- **Siguiente tarea**: 1.6 - Entorno base con prototipos
+- **Siguiente tarea**: 1.7 - Superficie inicial

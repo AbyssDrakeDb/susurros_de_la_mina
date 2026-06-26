@@ -1,0 +1,75 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="1"]
+[ext_resource type="Script" path="res://scripts/environment/cave_entrance.gd" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4"]
+
+[sub_resource type="BoxShape3D" id="SubResource_ground"]
+size = Vector3(20, 0.5, 20)
+
+[sub_resource type="StandardMaterial3D" id="SubResource_ground_mat"]
+albedo_color = Color(0.4, 0.5, 0.35, 1)
+
+[sub_resource type="PlaneMesh" id="SubResource_ground_mesh"]
+size = Vector2(20, 20)
+
+[sub_resource type="BoxShape3D" id="SubResource_cave_entrance"]
+size = Vector3(3, 3, 1)
+
+[sub_resource type="BoxMesh" id="SubResource_cave_entrance_mesh"]
+size = Vector3(3, 3, 1)
+
+[sub_resource type="StandardMaterial3D" id="SubResource_cave_mat"]
+albedo_color = Color(0.15, 0.15, 0.2, 1)
+
+[node name="Surface" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 10, 0)
+light_energy = 1.2
+shadow_enabled = true
+
+[node name="Ground" type="StaticBody3D" parent="."]
+collision_layer = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("SubResource_ground")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+mesh = SubResource("SubResource_ground_mesh")
+surface_material_override/0 = SubResource("SubResource_ground_mat")
+
+[node name="Player" parent="." instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="HUD" parent="." instance=ExtResource("4")]
+
+[node name="NPCBuyer" parent="." instance=ExtResource("1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, -2)
+
+[node name="CaveEntrance" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -8)
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("2")
+target_scene = "cave"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CaveEntrance"]
+shape = SubResource("SubResource_cave_entrance")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CaveEntrance"]
+mesh = SubResource("SubResource_cave_entrance_mesh")
+surface_material_override/0 = SubResource("SubResource_cave_mat")
+
+[node name="Label3D" type="Label3D" parent="CaveEntrance"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+visible = false
+pixel_size = 0.005
+font_size = 32
+text = "Presiona E para entrar"
+horizontal_alignment = 1

@@ -1,39 +1,64 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3 uid="uid://b8w2j1k5n3r7"]
 
-[ext_resource type="Script" path="res://scripts/minerals/mineral_node.gd" id="1"]
+[ext_resource type="Script" uid="uid://iexjoax6j5we" path="res://scripts/minerals/mineral_node.gd" id="1"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
-size = Vector3(0.5, 0.5, 0.5)
+[sub_resource type="BoxShape3D" id="SubResource_1"]
+size = Vector3(0.8, 0.8, 0.8)
 
-[sub_resource type="BoxMesh" id="BoxMesh_1"]
-size = Vector3(0.5, 0.5, 0.5)
+[sub_resource type="StandardMaterial3D" id="SubResource_3"]
+albedo_color = Color(0.8, 0.4, 0.2, 1)
+emission_enabled = true
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_healthbar"]
-size = Vector2(0.6, 0.08)
+[sub_resource type="BoxMesh" id="SubResource_2"]
+size = Vector3(0.8, 0.8, 0.8)
 
-[node name="MineralNode" type="StaticBody3D"]
-script = ExtResource("1")
+[sub_resource type="StandardMaterial3D" id="SubResource_6"]
+shading_mode = 0
+albedo_color = Color(0.1, 0.1, 0.1, 1)
+
+[sub_resource type="PlaneMesh" id="SubResource_4"]
+flip_faces = true
+size = Vector2(0.35, 0.08)
+
+[sub_resource type="StandardMaterial3D" id="SubResource_7"]
+shading_mode = 0
+albedo_color = Color(0.2, 0.8, 0.2, 1)
+
+[sub_resource type="PlaneMesh" id="SubResource_5"]
+flip_faces = true
+size = Vector2(0.35, 0.08)
+
+[node name="MineralNode" type="StaticBody3D" unique_id=425243543]
 collision_layer = 4
+script = ExtResource("1")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("BoxShape3D_1")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=810246649]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4400707, 0)
+shape = SubResource("SubResource_1")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_1")
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=946304908]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4400707, 0)
+material_override = SubResource("SubResource_3")
+mesh = SubResource("SubResource_2")
 
-[node name="HealthBar3D" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+[node name="HealthBar3D" type="Node3D" parent="." unique_id=603620760]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
 
-[node name="HealthBarBG" type="MeshInstance3D" parent="HealthBar3D"]
-mesh = SubResource("PlaneMesh_healthbar")
+[node name="HealthBarBG" type="MeshInstance3D" parent="HealthBar3D" unique_id=676452877]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+material_override = SubResource("SubResource_6")
+mesh = SubResource("SubResource_4")
 
-[node name="HealthFill" type="MeshInstance3D" parent="HealthBar3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.001)
-mesh = SubResource("PlaneMesh_healthbar")
+[node name="HealthFill" type="MeshInstance3D" parent="HealthBar3D" unique_id=359618232]
+transform = Transform3D(-1, -8.742278e-08, 3.821371e-15, 0, -4.371139e-08, -1, 8.742278e-08, -1, 4.371139e-08, 0, 0, 0)
+material_override = SubResource("SubResource_7")
+mesh = SubResource("SubResource_5")
 
-[node name="HealthLabel" type="Label3D" parent="HealthBar3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-pixel_size = 0.005
-font_size = 16
-text = "100 / 100"
-modulate = Color(1, 1, 1, 0.9)
+[node name="HealthLabel" type="Label3D" parent="HealthBar3D" unique_id=1779311684]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0.07, 0)
+pixel_size = 0.002
+billboard = 1
+no_depth_test = true
+text = "100"
+font_size = 36
+outline_size = 8
