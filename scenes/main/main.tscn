@@ -21,18 +21,6 @@ size = Vector3(2, 0.5, 2)
 [sub_resource type="StandardMaterial3D" id="Mat_platform"]
 albedo_color = Color(0.4, 0.45, 0.4, 1)
 
-[sub_resource type="StandardMaterial3D" id="Mat_copper"]
-albedo_color = Color(0.8, 0.4, 0.2, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_iron"]
-albedo_color = Color(0.5, 0.5, 0.55, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_gold"]
-albedo_color = Color(1.0, 0.84, 0.0, 1)
-
-[sub_resource type="StandardMaterial3D" id="Mat_crystal"]
-albedo_color = Color(0.4, 0.8, 1.0, 1)
-
 [node name="Main" type="Node3D"]
 script = ExtResource("1")
 
@@ -127,29 +115,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.75, -2)
 mineral_type = "copper"
 max_health = 100
 
-[node name="MeshInstance3D" parent="TestMinerals/CopperMineral1" index="1"]
-surface_material_override/0 = SubResource("Mat_copper")
-
 [node name="IronMineral1" parent="TestMinerals" instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.75, -2)
 mineral_type = "iron"
 max_health = 150
-
-[node name="MeshInstance3D" parent="TestMinerals/IronMineral1" index="1"]
-surface_material_override/0 = SubResource("Mat_iron")
 
 [node name="GoldMineral1" parent="TestMinerals" instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, -4)
 mineral_type = "gold"
 max_health = 200
 
-[node name="MeshInstance3D" parent="TestMinerals/GoldMineral1" index="1"]
-surface_material_override/0 = SubResource("Mat_gold")
-
 [node name="CrystalMineral1" parent="TestMinerals" instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.75, -4)
 mineral_type = "crystal"
 max_health = 300
-
-[node name="MeshInstance3D" parent="TestMinerals/CrystalMineral1" index="1"]
-surface_material_override/0 = SubResource("Mat_crystal")
