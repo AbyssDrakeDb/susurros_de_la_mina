@@ -1,8 +1,6 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=2 format=3]
 
 [ext_resource type="Script" path="res://scripts/npc/npc.gd" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/ui/trade_panel.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://scenes/ui/shop_panel.tscn" id="3"]
 
 [sub_resource type="CapsuleShape3D" id="SubResource_capsule"]
 radius = 0.4
@@ -38,12 +36,6 @@ pixel_size = 0.005
 font_size = 32
 text = "Comprador"
 horizontal_alignment = 1
-
-[node name="TradePanel" parent="." instance=ExtResource("2")]
-visible = false
-
-[node name="ShopPanel" parent="." instance=ExtResource("3")]
-visible = false
 
 [connection signal="body_entered" from="InteractionArea" to="." method="_on_interaction_area_body_entered"]
 [connection signal="body_exited" from="InteractionArea" to="." method="_on_interaction_area_body_exited"]

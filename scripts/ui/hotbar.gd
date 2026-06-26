@@ -20,7 +20,7 @@ var mineral_colors: Dictionary = {
 func _ready() -> void:
 	GameState.inventory_changed.connect(_on_inventory_changed)
 	_create_slots()
-	_update_display()
+	call_deferred("_update_display")
 
 ## ─── Métodos Privados ─────────────────────────────────
 func _create_slots() -> void:
@@ -53,12 +53,10 @@ func _create_slots() -> void:
 		var color_rect: ColorRect = ColorRect.new()
 		color_rect.custom_minimum_size = Vector2(40, 40)
 		color_rect.color = Color.TRANSPARENT
-		color_rect.name = "ColorRect"
 		
 		var count_label: Label = Label.new()
 		count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		count_label.add_theme_font_size_override("font_size", 14)
-		count_label.name = "CountLabel"
 		count_label.text = "0"
 		
 		vbox.add_child(color_rect)
@@ -75,18 +73,25 @@ func _update_display() -> void:
 	
 	for i in range(slots.size()):
 		var slot: PanelContainer = slots[i]
-		var color_rect: ColorRect = slot.get_node("VBoxContainer/ColorRect")
-		var count_label: Label = slot.get_node("VBoxContainer/CountLabel")
+		var vbox: VBoxContainer = slot.get_node_or_null("VBoxContainer")
+		if vbox == null:
+			continue
+		var color_rect: ColorRect = vbox.get_node_or_null("ColorRect")
+		var count_label: Label = vbox.get_node_or_null("CountLabel")
 		
 		if i < minerals.size():
 			var mineral_type: String = minerals[i]
 			var amount: int = GameState.inventory[mineral_type]
 			
-			color_rect.color = mineral_colors.get(mineral_type, Color.WHITE)
-			count_label.text = str(amount)
+			if color_rect:
+				color_rect.color = mineral_colors.get(mineral_type, Color.WHITE)
+			if count_label:
+				count_label.text = str(amount)
 		else:
-			color_rect.color = Color.TRANSPARENT
-			count_label.text = "0"
+			if color_rect:
+				color_rect.color = Color.TRANSPARENT
+			if count_label:
+				count_label.text = "0"
 
 func _on_inventory_changed() -> void:
 	_update_display()

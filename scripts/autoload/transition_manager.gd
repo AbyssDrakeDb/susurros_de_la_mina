@@ -31,9 +31,17 @@ func go_to_scene(scene_name: String) -> void:
 	is_transitioning = true
 	transition_started.emit()
 	
-	get_tree().change_scene_to_file(scenes[scene_name])
+	var error: Error = get_tree().change_scene_to_file(scenes[scene_name])
+	if error != OK:
+		push_error("Error al cambiar escena: " + scene_name)
+		is_transitioning = false
+		return
+	
+	await get_tree().process_frame
+	await get_tree().process_frame
 	
 	is_transitioning = false
+	current_scene = scene_name
 	transition_completed.emit()
 
 func go_to_surface() -> void:

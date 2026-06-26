@@ -66,15 +66,15 @@ func _update_display() -> void:
 			
 			var name_label: Label = Label.new()
 			name_label.text = upgrade["name"]
-			name_label.theme_override_font_sizes/font_size = 18
+			name_label.theme_override_font_sizes.font_size = 18
 			
 			var desc_label: Label = Label.new()
 			desc_label.text = upgrade["description"]
-			desc_label.theme_override_font_sizes/font_size = 14
+			desc_label.theme_override_font_sizes.font_size = 14
 			
 			var cost_label: Label = Label.new()
 			cost_label.text = "Costo: %d oro" % upgrade["cost"]
-			cost_label.theme_override_font_sizes/font_size = 14
+			cost_label.theme_override_font_sizes.font_size = 14
 			
 			info_vbox.add_child(name_label)
 			info_vbox.add_child(desc_label)

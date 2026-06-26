@@ -25,18 +25,19 @@ var is_shop_open: bool = false
 @onready var mesh: MeshInstance3D = $MeshInstance3D
 @onready var interaction_area: Area3D = $InteractionArea
 @onready var dialogue_label: Label3D = $DialogueLabel
-@onready var trade_panel: Control = $TradePanel
-@onready var shop_panel: Control = $ShopPanel
+
+## ─── Paneles instanciados dinámicamente ──────────────
+var _trade_layer: CanvasLayer = null
+var _shop_layer: CanvasLayer = null
+var _trade_panel: Control = null
+var _shop_panel: Control = null
 
 ## ─── Godot Callbacks ──────────────────────────────────
 func _ready() -> void:
 	if dialogue_label:
 		dialogue_label.visible = false
 		dialogue_label.text = npc_name
-	if trade_panel:
-		trade_panel.visible = false
-	if shop_panel:
-		shop_panel.visible = false
+	_setup_mesh()
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact") and is_player_near:
@@ -70,31 +71,72 @@ func _interact() -> void:
 
 func _open_trade() -> void:
 	is_trade_open = true
-	if trade_panel:
-		trade_panel.visible = true
-		trade_requested.emit(self)
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_trade_layer = CanvasLayer.new()
+	_trade_layer.layer = 20
+	get_tree().current_scene.add_child(_trade_layer)
+	
+	var panel_scene: PackedScene = load("res://scenes/ui/trade_panel.tscn")
+	_trade_panel = panel_scene.instantiate()
+	_trade_layer.add_child(_trade_panel)
+	_trade_panel.visible = true
+	_trade_panel.trade_closed.connect(_on_trade_closed)
+	trade_requested.emit(self)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 func _close_trade() -> void:
 	is_trade_open = false
-	if trade_panel:
-		trade_panel.visible = false
+	if _trade_panel:
+		_trade_panel.visible = false
+	if _trade_layer:
+		_trade_layer.queue_free()
+		_trade_layer = null
+		_trade_panel = null
 	interaction_ended.emit(self)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _on_trade_closed() -> void:
+	_close_trade()
 
 func _open_shop() -> void:
 	is_shop_open = true
-	if shop_panel:
-		shop_panel.visible = true
-		shop_requested.emit(self)
-		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_shop_layer = CanvasLayer.new()
+	_shop_layer.layer = 20
+	get_tree().current_scene.add_child(_shop_layer)
+	
+	var panel_scene: PackedScene = load("res://scenes/ui/shop_panel.tscn")
+	_shop_panel = panel_scene.instantiate()
+	_shop_layer.add_child(_shop_panel)
+	_shop_panel.visible = true
+	_shop_panel.shop_closed.connect(_on_shop_closed)
+	shop_requested.emit(self)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 func _close_shop() -> void:
 	is_shop_open = false
-	if shop_panel:
-		shop_panel.visible = false
+	if _shop_panel:
+		_shop_panel.visible = false
+	if _shop_layer:
+		_shop_layer.queue_free()
+		_shop_layer = null
+		_shop_panel = null
 	interaction_ended.emit(self)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+func _on_shop_closed() -> void:
+	_close_shop()
+
+func _setup_mesh() -> void:
+	if mesh == null:
+		return
+	var glb_path: String = "res://assets/3d/characters/glb/Knight.glb"
+	var glb_scene: PackedScene = load(glb_path)
+	if glb_scene:
+		var instance: Node3D = glb_scene.instantiate()
+		for child in instance.get_children():
+			instance.remove_child(child)
+			mesh.add_child(child)
+			if child is MeshInstance3D:
+				mesh.mesh = child.mesh
 
 func get_info() -> Dictionary:
 	return {

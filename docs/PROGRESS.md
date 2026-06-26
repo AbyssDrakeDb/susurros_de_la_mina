@@ -65,7 +65,7 @@
 | 1.17 | Mejoras iniciales | ✅ | +Capacidad mochila, +Daño pico |
 | 1.18 | Sistema de riesgo | ✅ | Daño por caída + pérdida de items |
 | 1.19 | Audio integration | ✅ | Pasos + minería integrados en player.gd |
-| 1.20 | Playtesting | 🔲 | Ajustar dificultad y balance |
+| 1.20 | Playtesting | ✅ | Ajustar dificultad y balance |
 
 **Estado: 🔲 PENDIENTE**
 

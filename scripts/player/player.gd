@@ -207,6 +207,7 @@ func _update_flashlight(delta: float) -> void:
 		if flashlight_battery <= 0.0:
 			_toggle_flashlight()
 		flashlight.light_energy = lerpf(0.3, 1.0, flashlight_battery / 100.0)
+		_update_hud_battery()
 
 ## ─── Head Bob ─────────────────────────────────────────
 func _update_head_bob(delta: float) -> void:
@@ -266,3 +267,8 @@ func _check_fall_damage() -> void:
 
 func _handle_death() -> void:
 	GameState.change_phase(GameState.GamePhase.GAME_OVER)
+
+func _update_hud_battery() -> void:
+	var hud: CanvasLayer = get_tree().current_scene.get_node_or_null("HUD")
+	if hud and hud.has_method("update_battery"):
+		hud.update_battery(flashlight_battery)

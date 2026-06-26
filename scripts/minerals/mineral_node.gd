@@ -46,6 +46,7 @@ func _ready() -> void:
 	_update_health_bar()
 	if health_label:
 		health_label.visible = false
+	mined.connect(_on_mined)
 
 func _process(_delta: float) -> void:
 	if is_depleted or health_label == null:
@@ -160,3 +161,6 @@ func _destroy() -> void:
 	var tween: Tween = create_tween()
 	tween.tween_property(mesh, "scale", Vector3.ZERO, 0.15)
 	tween.tween_callback(queue_free)
+
+func _on_mined(_node: MineralNode, amount: int) -> void:
+	GameState.add_mineral(mineral_type, amount)
