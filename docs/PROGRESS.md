@@ -30,17 +30,17 @@
 
 ---
 
-## FASE 1: Prototipo Mínimo de Minería (3 meses) 🔲 PENDIENTE
+## FASE 1: Prototipo Mínimo de Minería (3 meses) 🔄 EN PROGRESO
 
 ### Mes 1: Movimiento y Exploración
 
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
-| 1.1 | Player.tscn - CharacterBody3D | 🔲 | Movimiento FPS con gravedad |
-| 1.2 | Sistema de movimiento | 🔲 | WASD + sprint + jump |
-| 1.3 | Cámara en primera persona | 🔲 | Mouse look con límites |
-| 1.4 | Linterna con batería | 🔲 | Toggle on/off, drain rate |
-| 1.5 | Raycast de interacción | 🔲 | Detectar objetos interactivos |
+| 1.1 | Player.tscn - CharacterBody3D | ✅ | CharacterBody3D con CollisionShape3D |
+| 1.2 | Sistema de movimiento | ✅ | WASD + sprint + jump + gravedad |
+| 1.3 | Cámara en primera persona | ✅ | Mouse look con límites ±90° |
+| 1.4 | Linterna con batería | ✅ | Toggle F, drain 2%/s, intensidad variable |
+| 1.5 | Raycast de interacción | ✅ | Detectar objetos con método interact() |
 | 1.6 | Entorno base con prototipos | 🔲 | Usar modular_caves.glb |
 | 1.7 | Superficie inicial | 🔲 | Zona de spawn + NPC comprador |
 
@@ -48,10 +48,10 @@
 
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
-| 1.8 | MineralNode.gd | 🔲 | Vida, tipos, drop al destruir |
-| 1.9 | PickaxeTool.gd | 🔲 | Daño, cooldown, animación |
-| 1.10 | Sistema de inventario | 🔲 | Slots, capacidad, UI |
-| 1.11 | HUD - Barra de vida | 🔲 | HealthBar con tweens |
+| 1.8 | MineralNode.gd | ✅ | Vida, tipos (copper/iron/silver/gold/crystal), drops |
+| 1.9 | PickaxeTool.gd | ✅ | 4 tipos de picos, cooldown, upgrades |
+| 1.10 | Sistema de inventario | ✅ | En GameState, capacidad 20 |
+| 1.11 | HUD - Barra de vida | ✅ | HealthBar + BatteryBar + mineral counter |
 | 1.12 | HUD - Inventario rápido | 🔲 | Hotbar con items equipados |
 | 1.13 | Loop de retorno a superficie | 🔲 | Ascensor/escalera + checkpoint |
 
@@ -127,15 +127,15 @@
 | Fase | Estado | Progreso |
 |------|--------|----------|
 | Fase 0: Preparación | ✅ COMPLETADA | 18/18 (100%) |
-| Fase 1: Prototipo Mínimo | 🔲 PENDIENTE | 0/20 (0%) |
+| Fase 1: Prototipo Mínimo | 🔄 EN PROGRESO | 10/20 (50%) |
 | Fase 2: Profundidad | 🔲 PENDIENTE | 0/8 (0%) |
 | Fase 3: Horror | 🔲 PENDIENTE | 0/8 (0%) |
 | Fase 4: Lanzamiento | 🔲 PENDIENTE | 0/8 (0%) |
-| **TOTAL** | 🔲 | **18/62 (29%)** |
+| **TOTAL** | 🔄 | **28/62 (45%)** |
 
 ---
 
 ## Última Actualización
 - **Fecha**: 26 de Junio, 2026
 - **Fase actual**: Fase 1 - Prototipo Mínimo
-- **Siguiente tarea**: 1.1 - Player.tscn
+- **Siguiente tarea**: 1.6 - Entorno base con prototipos
