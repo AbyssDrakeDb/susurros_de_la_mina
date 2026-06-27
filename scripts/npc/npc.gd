@@ -25,6 +25,7 @@ var is_shop_open: bool = false
 @onready var mesh: MeshInstance3D = $MeshInstance3D
 @onready var interaction_area: Area3D = $InteractionArea
 @onready var dialogue_label: Label3D = $DialogueLabel
+@onready var interact_hint: Label3D = $InteractHint
 
 ## ─── Paneles instanciados dinámicamente ──────────────
 var _trade_layer: CanvasLayer = null
@@ -37,6 +38,8 @@ func _ready() -> void:
 	if dialogue_label:
 		dialogue_label.visible = false
 		dialogue_label.text = npc_name
+	if interact_hint:
+		interact_hint.visible = false
 	_setup_mesh()
 
 func _input(event: InputEvent) -> void:
@@ -64,7 +67,7 @@ func _interact() -> void:
 				dialogue_label.visible = false
 		)
 		
-		get_tree().create_timer(1.0).timeout.connect(func():
+		get_tree().create_timer(1.5).timeout.connect(func():
 			if is_player_near and not is_trade_open and not is_shop_open:
 				_open_trade()
 		)
@@ -82,6 +85,11 @@ func _open_trade() -> void:
 	_trade_panel.trade_closed.connect(_on_trade_closed)
 	trade_requested.emit(self)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
+	var player: Node3D = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("_toggle_pause"):
+		player.is_paused = true
+		player.velocity = Vector3.ZERO
 
 func _close_trade() -> void:
 	is_trade_open = false
@@ -93,6 +101,10 @@ func _close_trade() -> void:
 		_trade_panel = null
 	interaction_ended.emit(self)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
+	var player: Node3D = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("_toggle_pause"):
+		player.is_paused = false
 
 func _on_trade_closed() -> void:
 	_close_trade()
@@ -110,6 +122,11 @@ func _open_shop() -> void:
 	_shop_panel.shop_closed.connect(_on_shop_closed)
 	shop_requested.emit(self)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	
+	var player: Node3D = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("_toggle_pause"):
+		player.is_paused = true
+		player.velocity = Vector3.ZERO
 
 func _close_shop() -> void:
 	is_shop_open = false
@@ -121,6 +138,10 @@ func _close_shop() -> void:
 		_shop_panel = null
 	interaction_ended.emit(self)
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	
+	var player: Node3D = get_tree().get_first_node_in_group("player")
+	if player and player.has_method("_toggle_pause"):
+		player.is_paused = false
 
 func _on_shop_closed() -> void:
 	_close_shop()
@@ -150,12 +171,16 @@ func get_info() -> Dictionary:
 func _on_interaction_area_body_entered(body: Node3D) -> void:
 	if body.is_in_group("player"):
 		is_player_near = true
+		if interact_hint:
+			interact_hint.visible = true
 
 func _on_interaction_area_body_exited(body: Node3D) -> void:
 	if body.is_in_group("player"):
 		is_player_near = false
 		if dialogue_label:
 			dialogue_label.visible = false
+		if interact_hint:
+			interact_hint.visible = false
 		if is_trade_open:
 			_close_trade()
 		if is_shop_open:

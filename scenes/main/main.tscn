@@ -8,10 +8,10 @@
 [ext_resource type="Script" path="res://scripts/environment/cave_entrance.gd" id="6"]
 
 [sub_resource type="BoxShape3D" id="SubResource_exit"]
-size = Vector3(3, 3, 1)
+size = Vector3(5, 4, 3)
 
 [sub_resource type="BoxMesh" id="SubResource_exit_mesh"]
-size = Vector3(3, 3, 1)
+size = Vector3(5, 4, 3)
 
 [sub_resource type="StandardMaterial3D" id="SubResource_exit_mat"]
 albedo_color = Color(0.3, 0.3, 0.25, 1)

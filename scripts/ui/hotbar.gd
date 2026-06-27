@@ -55,6 +55,7 @@ func _create_slots() -> void:
 		color_rect.color = Color.TRANSPARENT
 		
 		var count_label: Label = Label.new()
+		count_label.name = "CountLabel"
 		count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		count_label.add_theme_font_size_override("font_size", 14)
 		count_label.text = "0"

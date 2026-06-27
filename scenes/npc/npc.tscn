@@ -7,7 +7,7 @@ radius = 0.4
 height = 1.8
 
 [sub_resource type="BoxShape3D" id="SubResource_interaction"]
-size = Vector3(2, 2, 2)
+size = Vector3(4, 3, 4)
 
 [node name="NPC" type="StaticBody3D"]
 collision_layer = 8
@@ -31,11 +31,20 @@ collision_mask = 2
 shape = SubResource("SubResource_interaction")
 
 [node name="DialogueLabel" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 pixel_size = 0.005
-font_size = 32
+font_size = 40
 text = "Comprador"
 horizontal_alignment = 1
+
+[node name="InteractHint" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+visible = false
+pixel_size = 0.004
+font_size = 28
+text = "[E] Hablar"
+horizontal_alignment = 1
+modulate = Color(1, 1, 0.6, 1)
 
 [connection signal="body_entered" from="InteractionArea" to="." method="_on_interaction_area_body_entered"]
 [connection signal="body_exited" from="InteractionArea" to="." method="_on_interaction_area_body_exited"]
