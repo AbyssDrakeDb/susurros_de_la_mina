@@ -76,15 +76,15 @@ func _update_display() -> void:
 			
 			var name_label: Label = Label.new()
 			name_label.text = upgrade["name"]
-			name_label.theme_override_font_sizes.font_size = 18
+			name_label.add_theme_font_size_override("font_size", 18)
 			
 			var desc_label: Label = Label.new()
 			desc_label.text = upgrade["description"]
-			desc_label.theme_override_font_sizes.font_size = 14
+			desc_label.add_theme_font_size_override("font_size", 14)
 			
 			var cost_label: Label = Label.new()
 			cost_label.text = "Costo: %d oro" % upgrade["cost"]
-			cost_label.theme_override_font_sizes.font_size = 14
+			cost_label.add_theme_font_size_override("font_size", 14)
 			
 			info_vbox.add_child(name_label)
 			info_vbox.add_child(desc_label)
@@ -110,7 +110,7 @@ func _update_display() -> void:
 		
 		var items_title: Label = Label.new()
 		items_title.text = "Items"
-		items_title.theme_override_font_sizes.font_size = 20
+		items_title.add_theme_font_size_override("font_size", 20)
 		upgrade_list.add_child(items_title)
 		
 		for item in consumables:
@@ -121,15 +121,15 @@ func _update_display() -> void:
 			
 			var name_label: Label = Label.new()
 			name_label.text = item["name"]
-			name_label.theme_override_font_sizes.font_size = 18
+			name_label.add_theme_font_size_override("font_size", 18)
 			
 			var desc_label: Label = Label.new()
 			desc_label.text = item["description"]
-			desc_label.theme_override_font_sizes.font_size = 14
+			desc_label.add_theme_font_size_override("font_size", 14)
 			
 			var cost_label: Label = Label.new()
 			cost_label.text = "Costo: %d oro" % item["cost"]
-			cost_label.theme_override_font_sizes.font_size = 14
+			cost_label.add_theme_font_size_override("font_size", 14)
 			
 			info_vbox.add_child(name_label)
 			info_vbox.add_child(desc_label)

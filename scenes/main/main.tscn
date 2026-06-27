@@ -1,12 +1,11 @@
 [gd_scene format=3 uid="uid://b8t0rm8lqc75x"]
 
-[ext_resource type="Script" uid="uid://cdp5gnp3igspr" path="res://scripts/autoload/main.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3"]
 [ext_resource type="PackedScene" uid="uid://b8w2j1k5n3r7" path="res://scenes/minerals/mineral_node.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/environment/cave_room.tscn" id="5"]
-[ext_resource type="Script" path="res://scripts/environment/cave_entrance.gd" id="6"]
-[ext_resource type="Script" path="res://scripts/environment/hazard.gd" id="7"]
+[ext_resource type="Script" uid="uid://iokg8oi60372" path="res://scripts/environment/cave_entrance.gd" id="6"]
+[ext_resource type="Script" uid="uid://dl4q1306whr18" path="res://scripts/environment/hazard.gd" id="7"]
 
 [sub_resource type="BoxShape3D" id="SubResource_exit"]
 size = Vector3(5, 4, 3)
@@ -26,131 +25,126 @@ size = Vector3(2, 0.5, 2)
 [sub_resource type="StandardMaterial3D" id="SubResource_hazard_mat"]
 albedo_color = Color(0.6, 0.2, 0.1, 1)
 
-[node name="Main" type="Node3D" script = ExtResource("1")]
+[node name="Main" type="Node3D" unique_id=231579914]
 
-[node name="CaveRoom" parent="." instance=ExtResource("5")]
+[node name="CaveRoom" parent="." unique_id=256983870 instance=ExtResource("5")]
 
-[node name="CaveExit" type="Area3D" parent="."]
+[node name="CaveExit" type="Area3D" parent="." unique_id=145118518]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 5)
 collision_layer = 8
 collision_mask = 2
 script = ExtResource("6")
 target_scene = "surface"
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CaveExit"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CaveExit" unique_id=1993816058]
 shape = SubResource("SubResource_exit")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CaveExit"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="CaveExit" unique_id=812512652]
 mesh = SubResource("SubResource_exit_mesh")
 surface_material_override/0 = SubResource("SubResource_exit_mat")
 
-[node name="Label3D" type="Label3D" parent="CaveExit"]
+[node name="Label3D" type="Label3D" parent="CaveExit" unique_id=497210362]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
 visible = false
-pixel_size = 0.005
-font_size = 32
 text = "Presiona E para salir"
-horizontal_alignment = 1
 
-[node name="Player" parent="." instance=ExtResource("2")]
+[node name="Player" parent="." unique_id=1042402742 instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
 
-[node name="HUD" parent="." instance=ExtResource("3")]
+[node name="HUD" parent="." unique_id=1247719856 instance=ExtResource("3")]
 
-[node name="Minerals" type="Node3D" parent="."]
+[node name="Minerals" type="Node3D" parent="." unique_id=987063793]
 
-[node name="CopperGroup1" type="Node3D" parent="Minerals"]
+[node name="CopperGroup1" type="Node3D" parent="Minerals" unique_id=727578364]
 
-[node name="Copper1" parent="Minerals/CopperGroup1" instance=ExtResource("4")]
+[node name="Copper1" parent="Minerals/CopperGroup1" unique_id=1668818631 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.5, -3)
 
-[node name="Copper2" parent="Minerals/CopperGroup1" instance=ExtResource("4")]
+[node name="Copper2" parent="Minerals/CopperGroup1" unique_id=1217166054 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.5, -4)
 
-[node name="Copper3" parent="Minerals/CopperGroup1" instance=ExtResource("4")]
+[node name="Copper3" parent="Minerals/CopperGroup1" unique_id=2037946941 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, -5)
 
-[node name="IronGroup1" type="Node3D" parent="Minerals"]
+[node name="IronGroup1" type="Node3D" parent="Minerals" unique_id=1560252037]
 
-[node name="Iron1" parent="Minerals/IronGroup1" instance=ExtResource("4")]
+[node name="Iron1" parent="Minerals/IronGroup1" unique_id=1879498465 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, -3)
 mineral_type = "iron"
 max_health = 150
 
-[node name="Iron2" parent="Minerals/IronGroup1" instance=ExtResource("4")]
+[node name="Iron2" parent="Minerals/IronGroup1" unique_id=1562698553 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.5, -5)
 mineral_type = "iron"
 max_health = 150
 
-[node name="Iron3" parent="Minerals/IronGroup1" instance=ExtResource("4")]
+[node name="Iron3" parent="Minerals/IronGroup1" unique_id=1558649691 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, -6)
 mineral_type = "iron"
 max_health = 150
 
-[node name="GoldGroup1" type="Node3D" parent="Minerals"]
+[node name="GoldGroup1" type="Node3D" parent="Minerals" unique_id=2124040651]
 
-[node name="Gold1" parent="Minerals/GoldGroup1" instance=ExtResource("4")]
+[node name="Gold1" parent="Minerals/GoldGroup1" unique_id=1927309663 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -8)
 mineral_type = "gold"
 max_health = 200
 
-[node name="Gold2" parent="Minerals/GoldGroup1" instance=ExtResource("4")]
+[node name="Gold2" parent="Minerals/GoldGroup1" unique_id=1181515937 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.5, -9)
 mineral_type = "gold"
 max_health = 200
 
-[node name="CrystalGroup1" type="Node3D" parent="Minerals"]
+[node name="CrystalGroup1" type="Node3D" parent="Minerals" unique_id=378806202]
 
-[node name="Crystal1" parent="Minerals/CrystalGroup1" instance=ExtResource("4")]
+[node name="Crystal1" parent="Minerals/CrystalGroup1" unique_id=306948050 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0.5, -12)
 mineral_type = "crystal"
 max_health = 300
 
-[node name="Crystal2" parent="Minerals/CrystalGroup1" instance=ExtResource("4")]
+[node name="Crystal2" parent="Minerals/CrystalGroup1" unique_id=2072249577 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.5, -14)
 mineral_type = "crystal"
 max_health = 300
 
-[node name="SilverGroup1" type="Node3D" parent="Minerals"]
+[node name="SilverGroup1" type="Node3D" parent="Minerals" unique_id=627021628]
 
-[node name="Silver1" parent="Minerals/SilverGroup1" instance=ExtResource("4")]
+[node name="Silver1" parent="Minerals/SilverGroup1" unique_id=1980663487 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, -10)
 mineral_type = "silver"
 max_health = 175
 
-[node name="Silver2" parent="Minerals/SilverGroup1" instance=ExtResource("4")]
+[node name="Silver2" parent="Minerals/SilverGroup1" unique_id=241010358 instance=ExtResource("4")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, -11)
 mineral_type = "silver"
 max_health = 175
 
-[node name="Hazards" type="Node3D" parent="."]
+[node name="Hazards" type="Node3D" parent="." unique_id=192362400]
 
-[node name="SpikeTrap1" type="Area3D" parent="Hazards"]
+[node name="SpikeTrap1" type="Area3D" parent="Hazards" unique_id=32314660]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -6)
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("7")
 damage_amount = 15
-damage_interval = 1.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hazards/SpikeTrap1"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hazards/SpikeTrap1" unique_id=870561090]
 shape = SubResource("SubResource_hazard")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Hazards/SpikeTrap1"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hazards/SpikeTrap1" unique_id=1062990886]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
 mesh = SubResource("SubResource_hazard_mesh")
 surface_material_override/0 = SubResource("SubResource_hazard_mat")
 
-[node name="Label3D" type="Label3D" parent="Hazards/SpikeTrap1"]
+[node name="Label3D" type="Label3D" parent="Hazards/SpikeTrap1" unique_id=1892172112]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 visible = false
 pixel_size = 0.004
-font_size = 24
-text = "¡Pinchos!"
-horizontal_alignment = 1
 modulate = Color(1, 0.3, 0.3, 1)
+text = "¡Pinchos!"
+font_size = 24
 
-[node name="SpikeTrap2" type="Area3D" parent="Hazards"]
+[node name="SpikeTrap2" type="Area3D" parent="Hazards" unique_id=523696046]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.25, -9)
 collision_layer = 0
 collision_mask = 2
@@ -158,24 +152,23 @@ script = ExtResource("7")
 damage_amount = 20
 damage_interval = 0.8
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hazards/SpikeTrap2"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hazards/SpikeTrap2" unique_id=182634089]
 shape = SubResource("SubResource_hazard")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Hazards/SpikeTrap2"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hazards/SpikeTrap2" unique_id=1259969996]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
 mesh = SubResource("SubResource_hazard_mesh")
 surface_material_override/0 = SubResource("SubResource_hazard_mat")
 
-[node name="Label3D" type="Label3D" parent="Hazards/SpikeTrap2"]
+[node name="Label3D" type="Label3D" parent="Hazards/SpikeTrap2" unique_id=1052631995]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 visible = false
 pixel_size = 0.004
-font_size = 24
-text = "¡Pinchos!"
-horizontal_alignment = 1
 modulate = Color(1, 0.3, 0.3, 1)
+text = "¡Pinchos!"
+font_size = 24
 
-[node name="SpikeTrap3" type="Area3D" parent="Hazards"]
+[node name="SpikeTrap3" type="Area3D" parent="Hazards" unique_id=405555750]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.25, -13)
 collision_layer = 0
 collision_mask = 2
@@ -183,42 +176,39 @@ script = ExtResource("7")
 damage_amount = 25
 damage_interval = 0.6
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Hazards/SpikeTrap3"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hazards/SpikeTrap3" unique_id=1173518567]
 shape = SubResource("SubResource_hazard")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Hazards/SpikeTrap3"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hazards/SpikeTrap3" unique_id=878627514]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
 mesh = SubResource("SubResource_hazard_mesh")
 surface_material_override/0 = SubResource("SubResource_hazard_mat")
 
-[node name="Label3D" type="Label3D" parent="Hazards/SpikeTrap3"]
+[node name="Label3D" type="Label3D" parent="Hazards/SpikeTrap3" unique_id=318632537]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 visible = false
 pixel_size = 0.004
-font_size = 24
-text = "¡Pinchos!"
-horizontal_alignment = 1
 modulate = Color(1, 0.3, 0.3, 1)
+text = "¡Pinchos!"
+font_size = 24
 
-[node name="Pickups" type="Node3D" parent="."]
+[node name="Pickups" type="Node3D" parent="." unique_id=1691930450]
 
-[node name="BatteryPickup1" type="Area3D" parent="Pickups"]
+[node name="BatteryPickup1" type="Area3D" parent="Pickups" unique_id=1835714950]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.5, -7)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Pickups/BatteryPickup1"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Pickups/BatteryPickup1" unique_id=2110820104]
 shape = SubResource("SubResource_hazard")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pickups/BatteryPickup1"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Pickups/BatteryPickup1" unique_id=1279290369]
 mesh = SubResource("SubResource_hazard_mesh")
 surface_material_override/0 = SubResource("SubResource_hazard_mat")
 
-[node name="Label3D" type="Label3D" parent="Pickups/BatteryPickup1"]
+[node name="Label3D" type="Label3D" parent="Pickups/BatteryPickup1" unique_id=1707055487]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
-visible = true
 pixel_size = 0.004
-font_size = 20
-text = "[E] Pila"
-horizontal_alignment = 1
 modulate = Color(0.2, 0.8, 0.2, 1)
+text = "[E] Pila"
+font_size = 20

@@ -63,6 +63,7 @@ func _ready() -> void:
 	add_to_group("player")
 	_setup_pickaxe()
 	_load_audio()
+	GameState.phase_changed.connect(_on_phase_changed)
 
 func _input(event: InputEvent) -> void:
 	if is_paused:
@@ -211,6 +212,24 @@ func _use_battery() -> void:
 		_update_hud_battery()
 		if flashlight_on:
 			flashlight.light_energy = 1.0
+		_show_notification("Pila usada! Pilas restantes: %d" % GameState.battery_cells)
+	else:
+		_show_notification("No tienes pilas! (R)")
+
+func _show_notification(text: String) -> void:
+	var label: Label3D = Label3D.new()
+	label.text = text
+	label.font_size = 20
+	label.modulate = Color(1, 1, 0.5)
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.no_depth_test = true
+	label.pixel_size = 0.003
+	head.add_child(label)
+	label.position = Vector3(0, -0.3, -1.5)
+	
+	var tween: Tween = create_tween()
+	tween.tween_property(label, "modulate:a", 0.0, 2.0)
+	tween.tween_callback(label.queue_free)
 
 func _update_flashlight(delta: float) -> void:
 	if flashlight_on:
@@ -219,6 +238,8 @@ func _update_flashlight(delta: float) -> void:
 		flashlight_battery = maxf(flashlight_battery, 0.0)
 		if flashlight_battery <= 0.0:
 			_toggle_flashlight()
+			if GameState.battery_cells > 0:
+				_show_notification("Linterna agotada! Presiona R para recargar")
 		flashlight.light_energy = lerpf(0.3, 1.0, flashlight_battery / 100.0)
 		_update_hud_battery()
 
@@ -252,6 +273,8 @@ func _try_mine() -> void:
 
 ## ─── Pausa ────────────────────────────────────────────
 func _toggle_pause() -> void:
+	if GameState.current_phase == GameState.GamePhase.GAME_OVER:
+		return
 	if is_paused:
 		is_paused = false
 		GameState.change_phase(GameState.GamePhase.PLAYING)
@@ -280,6 +303,62 @@ func _check_fall_damage() -> void:
 
 func _handle_death() -> void:
 	GameState.change_phase(GameState.GamePhase.GAME_OVER)
+
+func _on_phase_changed(new_phase: GameState.GamePhase) -> void:
+	match new_phase:
+		GameState.GamePhase.GAME_OVER:
+			is_paused = true
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			_show_game_over_screen()
+
+func _show_game_over_screen() -> void:
+	var overlay: CanvasLayer = CanvasLayer.new()
+	overlay.layer = 100
+	get_tree().current_scene.add_child(overlay)
+	
+	var bg: ColorRect = ColorRect.new()
+	bg.color = Color(0, 0, 0, 0.85)
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.add_child(bg)
+	
+	var vbox: VBoxContainer = VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_CENTER)
+	vbox.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	vbox.grow_vertical = Control.GROW_DIRECTION_BOTH
+	vbox.custom_minimum_size = Vector2(400, 200)
+	vbox.position = Vector2(-200, -100)
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	bg.add_child(vbox)
+	
+	var title: Label = Label.new()
+	title.text = "GAME OVER"
+	title.add_theme_font_size_override("font_size", 48)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(title)
+	
+	var total: int = 0
+	for mineral in GameState.inventory:
+		total += GameState.inventory[mineral]
+	
+	var stats: Label = Label.new()
+	stats.text = "Oro: %d | Mineral: %d" % [GameState.gold, total]
+	stats.add_theme_font_size_override("font_size", 20)
+	stats.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(stats)
+	
+	var spacer: Control = Control.new()
+	spacer.custom_minimum_size = Vector2(0, 20)
+	vbox.add_child(spacer)
+	
+	var restart_button: Button = Button.new()
+	restart_button.text = "Reiniciar"
+	restart_button.custom_minimum_size = Vector2(200, 40)
+	restart_button.pressed.connect(_on_restart_pressed)
+	vbox.add_child(restart_button)
+
+func _on_restart_pressed() -> void:
+	GameState.reset_state()
+	TransitionManager.go_to_scene("surface")
 
 func _update_hud_battery() -> void:
 	var hud: CanvasLayer = get_tree().current_scene.get_node_or_null("HUD")
