@@ -50,6 +50,9 @@ var inventory_used: int = 0
 ## ─── Economía ────────────────────────────────────────
 var gold: int = 0
 
+## ─── Items especiales ─────────────────────────────────
+var battery_cells: int = 0
+
 ## ─── Progresión ──────────────────────────────────────
 var flags: Dictionary = {}
 var unlocked_upgrades: Array[String] = []
@@ -74,7 +77,7 @@ func add_mineral(mineral_type: String, amount: int = 1) -> bool:
 	var current_amount = inventory.get(mineral_type, 0)
 	var new_total = current_amount + amount
 
-	if new_total > _get_max_stack():
+	if inventory_used + amount > inventory_capacity:
 		return false
 
 	inventory[mineral_type] = new_total
@@ -155,6 +158,32 @@ func unlock_upgrade(upgrade_name: String) -> void:
 func has_upgrade(upgrade_name: String) -> bool:
 	return unlocked_upgrades.has(upgrade_name)
 
+func get_damage_bonus() -> int:
+	if has_upgrade("pickaxe_damage"):
+		return 10
+	return 0
+
+func get_speed_multiplier() -> float:
+	if has_upgrade("speed_upgrade"):
+		return 1.2
+	return 1.0
+
+func get_battery_multiplier() -> float:
+	if has_upgrade("battery_upgrade"):
+		return 1.5
+	return 1.0
+
+func add_battery(amount: int = 1) -> void:
+	battery_cells += amount
+	inventory_changed.emit()
+
+func use_battery() -> bool:
+	if battery_cells <= 0:
+		return false
+	battery_cells -= 1
+	inventory_changed.emit()
+	return true
+
 func reset_state() -> void:
 	health = max_health
 	energy = max_energy
@@ -178,4 +207,15 @@ func _get_max_stack() -> int:
 	return 99
 
 func _handle_death() -> void:
+	lose_random_items()
 	change_phase(GamePhase.GAME_OVER)
+
+func lose_random_items() -> void:
+	var items_to_lose: int = randi_range(1, 3)
+	var mineral_types: Array = inventory.keys()
+	mineral_types.shuffle()
+	
+	for i in range(mini(items_to_lose, mineral_types.size())):
+		var mineral_type: String = mineral_types[i]
+		var amount_to_lose: int = randi_range(1, inventory[mineral_type])
+		remove_mineral(mineral_type, amount_to_lose)
