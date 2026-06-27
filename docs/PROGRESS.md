@@ -30,44 +30,63 @@
 
 ---
 
-## FASE 1: Prototipo Mínimo de Minería (3 meses) 🔄 EN PROGRESO
+## FASE 1: Prototipo Mínimo de Minería (2 días) ✅ COMPLETADA
 
-### Mes 1: Movimiento y Exploración
+### Sub-Fase 1.1: Movimiento y Exploración (26 Jun)
 
-| # | Tarea | Estado | Notas |
-|---|-------|--------|-------|
-| 1.1 | Player.tscn - CharacterBody3D | ✅ | CharacterBody3D con CollisionShape3D |
-| 1.2 | Sistema de movimiento | ✅ | WASD + sprint + jump + gravedad |
-| 1.3 | Cámara en primera persona | ✅ | Mouse look con límites ±90° |
-| 1.4 | Linterna con batería | ✅ | Toggle F, drain 2%/s, intensidad variable |
-| 1.5 | Raycast de interacción | ✅ | Detectar objetos con método interact() |
-| 1.6 | Entorno base con prototipos | ✅ | CaveRoom.tscn + generate_collisions.gd |
-| 1.7 | Superficie inicial | ✅ | Surface.tscn + NPC + CaveEntrance |
+| # | Tarea | Estado | Commit | Notas |
+|---|-------|--------|--------|-------|
+| 1.1 | Player.tscn - CharacterBody3D | ✅ | 7aa1a32 | CharacterBody3D + CollisionShape3D |
+| 1.2 | Sistema de movimiento | ✅ | 7aa1a32 → 888fcf1 | WASD + sprint + jump + gravity + frenado |
+| 1.3 | Cámara en primera persona | ✅ | 7aa1a32 | Mouse look ±90°, sensitivity 0.003 |
+| 1.4 | Linterna con batería | ✅ | 7aa1a32 | Toggle F, drain 2%/s, intensidad variable |
+| 1.5 | Raycast de interacción | ✅ | 7aa1a32 | 15° down, 2.5m, detecta take_damage() |
+| 1.6 | Entorno base con prototipos | ✅ | adaa122 | CaveRoom + generate_collisions.gd |
+| 1.7 | Superficie inicial | ✅ | adaa122 | Surface.tscn + NPC + CaveEntrance |
 
-### Mes 2: Sistema de Minería y Recursos
+### Sub-Fase 1.2: Sistema de Minería y Recursos (26 Jun)
 
-| # | Tarea | Estado | Notas |
-|---|-------|--------|-------|
-| 1.8 | MineralNode.gd | ✅ | Vida, tipos (copper/iron/silver/gold/crystal), drops |
-| 1.9 | PickaxeTool.gd | ✅ | 4 tipos de picos, cooldown, upgrades |
-| 1.10 | Sistema de inventario | ✅ | En GameState, capacidad 20 |
-| 1.11 | HUD - Barra de vida | ✅ | HealthBar + BatteryBar + mineral counter |
-| 1.12 | HUD - Inventario rápido | ✅ | Hotbar.tscn con slots visuales |
-| 1.13 | Loop de retorno a superficie | ✅ | CaveEntrance + TransitionManager |
+| # | Tarea | Estado | Commit | Notas |
+|---|-------|--------|--------|-------|
+| 1.8 | MineralNode.gd | ✅ | 7aa1a32 → 3f0947f | 5 tipos, materials únicos, health bar 3D |
+| 1.9 | PickaxeTool.gd | ✅ | 7aa1a32 | 4 tipos, cooldown, upgrades |
+| 1.10 | Sistema de inventario | ✅ | 7aa1a32 | Dictionary, capacity 20, signals |
+| 1.11 | HUD - Barra de vida | ✅ | 7aa1a32 | HealthBar + BatteryBar + mineral counter |
+| 1.12 | HUD - Inventario rápido | ✅ | 7aa1a32 → 48f90b6 | 6 slots, battery display, signal fix |
+| 1.13 | Loop de retorno a superficie | ✅ | 7aa1a32 | CaveEntrance + TransitionManager |
 
-### Mes 3: Economía y Loop Completo
+### Sub-Fase 1.3: Economía y Loop Completo (26-27 Jun)
 
-| # | Tarea | Estado | Notas |
-|---|-------|--------|-------|
-| 1.14 | NPC Comprador | ✅ | npc.gd + dialogue + trade_panel |
-| 1.15 | Sistema de comercio | ✅ | TradePanel + TradeSystem |
-| 1.16 | Tienda de mejoras | ✅ | ShopPanel + upgrades |
-| 1.17 | Mejoras iniciales | ✅ | +Capacidad mochila, +Daño pico |
-| 1.18 | Sistema de riesgo | ✅ | Daño por caída + pérdida de items |
-| 1.19 | Audio integration | ✅ | Pasos + minería integrados en player.gd |
-| 1.20 | Playtesting | ✅ | Ajustar dificultad y balance |
+| # | Tarea | Estado | Commit | Notas |
+|---|-------|--------|--------|-------|
+| 1.14 | NPC Comprador | ✅ | c755f40 | Knight.glb, dialogue, trade panel |
+| 1.15 | Sistema de comercio | ✅ | c755f40 | TradePanel + TradeSystem (5 minerales) |
+| 1.16 | Tienda de mejoras | ✅ | c755f40 → cf30e8d | 4 upgrades + battery cells |
+| 1.17 | Mejoras iniciales | ✅ | c755f40 | +Capacidad, +Daño, +Batería, +Velocidad |
+| 1.18 | Sistema de riesgo | ✅ | 96209dc | Fall damage + hazards + death penalty |
+| 1.19 | Audio integration | ✅ | c755f40 | 5 mining + 5 footstep sounds |
+| 1.20 | Playtesting | ✅ | 33292aa → cf30e8d | 11 categorías, 14 bugs corregidos |
 
-**Estado: 🔲 PENDIENTE**
+**Estado: ✅ COMPLETADA - v0.3.0-alpha - 16 commits (7aa1a32 → cf30e8d)**
+
+### Bugs Corregidos en Fase 1
+
+| # | Bug | Severidad | Commit Fix |
+|---|-----|-----------|------------|
+| 1 | Escenas .tscn incompatible Godot 4.7 | Alta | bcbcc5c |
+| 2 | Movimiento dirección incorrecta | Alta | 3a831be |
+| 3 | Mouse no se libera | Media | 888fcf1 |
+| 4 | Materiales compartidos entre minerales | Alta | 3f0947f |
+| 5 | Raycast no detecta minerales | Alta | 3f0947f |
+| 6 | MineralNode sin health bar visible | Media | a346af4 |
+| 7 | Hotbar no muestra inventario | Alta | 48f90b6 |
+| 8 | NPC mesh no aparece | Alta | 33292aa |
+| 9 | CanvasLayer NPC sin input | Alta | 33292aa |
+| 10 | ShopPanel crash theme_override | Alta | cf30e8d |
+| 11 | Game over no triggerea | Alta | cf30e8d |
+| 12 | Botón reiniciar no funciona | Alta | cf30e8d |
+| 13 | ESC durante game over despausa | Media | cf30e8d |
+| 14 | Sin feedback al usar pilas | Media | cf30e8d |
 
 ---
 
@@ -153,16 +172,17 @@
 
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
-| 3.1 | IA de criatura | 🔲 | 3 estados: Patrol, Chase, Search |
-| 3.2 | Detección de ruido | 🔲 | Sistema de audio propagation |
-| 3.3 | Detección de luz | 🔲 | La criatura evita/huye de luz |
-| 3.4 | Sistema de escondites | 🔲 | Armarios, grietas, oscuridad |
-| 3.5 | Mineral desencadenante | 🔲 | Evento que activa horror |
-| 3.6 | Mecánicas de evasión | 🔲 | Correr, esconderse, distracciones |
-| 3.7 | Narrativa ambiental | 🔲 | Notas, diarios, grabaciones |
-| 3.8 | Horror progresivo | 🔲 | Intensidad gradual |
+| 3.A.1 | CreatureAI (5 estados) | 🔲 | IDLE, PATROL, CHASE, SEARCH, RETREAT |
+| 3.A.2 | Detección de ruido | 🔲 | Pasos, minado, correr →吸引 criatura |
+| 3.A.3 | Detección de luz | 🔲 | Criatura evita zonas iluminadas |
+| 3.B.1 | Sistema de escondites | 🔲 | Armarios, grietas, zonas oscuras |
+| 3.B.2 | Sistema de distracciones | 🔲 | Piedra, bomba de luz, ruidoso |
+| 3.C.1 | Notas/diarios | 🔲 | 20+ notas, audio recordings |
+| 3.C.2 | Horror progresivo | 🔲 | Eventos ambientales por fase |
+| 3.D.1 | Balance de criatura | 🔲 | Velocidad, detección, dificultad |
 
-**Estado: 🔲 PENDIENTE**
+**Estado: 🔲 PENDIENTE (0/8 tareas)**
+**Plan detallado:** `docs/plans/phase3_detailed.md`
 
 ---
 
@@ -170,29 +190,30 @@
 
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
-| 4.1 | Narrativa completa | 🔲 | Cutscenes, final alternativo |
-| 4.2 | Audio final | 🔲 | Voice acting, música orquestal |
-| 4.3 | Postprocesado visual | 🔲 | Advanced shaders |
-| 4.4 | QA y optimización | 🔲 | Profiling, memory, LODs |
-| 4.5 | Localización | 🔲 | ES, EN, PT |
-| 4.6 | Marketing | 🔲 | Trailer, screenshots, Steam page |
-| 4.7 | **Publicación Steam** | 🔲 | Launch |
-| 4.8 | **Publicación itch.io** | 🔲 | Publicar demo |
+| 4.A.1 | Narrativa completa + cutscenes | 🔲 | Opening, story beats, endings |
+| 4.A.2 | Contenido final (notas, props) | 🔲 | 20+ notas, 10+ grabaciones, props |
+| 4.B.1 | Audio final | 🔲 | Voice acting, música orquestal |
+| 4.B.2 | Postprocesado avanzado | 🔲 | Bloom, vignette, color grading |
+| 4.C.1 | QA y optimización | 🔲 | 30+ FPS, profiling, LODs |
+| 4.D.1 | Localización (i18n) | 🔲 | ES, EN, PT-BR |
+| 4.E.1 | Marketing | 🔲 | Trailer, screenshots, Steam page |
+| 4.E.2 | Publicación | 🔲 | Steam + itch.io |
 
-**Estado: 🔲 PENDIENTE**
+**Estado: 🔲 PENDIENTE (0/8 tareas)**
+**Plan detallado:** `docs/plans/phase4_detailed.md`
 
 ---
 
 ## Resumen de Progreso
 
-| Fase | Estado | Progreso |
-|------|--------|----------|
-| Fase 0: Preparación | ✅ COMPLETADA | 18/18 (100%) |
-| Fase 1: Prototipo Mínimo | ✅ COMPLETADA | 20/20 (100%) |
-| Fase 2: Profundidad | 🔲 PENDIENTE | 0/32 (0%) |
-| Fase 3: Horror | 🔲 PENDIENTE | 0/8 (0%) |
-| Fase 4: Lanzamiento | 🔲 PENDIENTE | 0/8 (0%) |
-| **TOTAL** | 🔄 | **38/86 (44%)** |
+| Fase | Estado | Progreso | Plan Detallado |
+|------|--------|----------|----------------|
+| Fase 0: Preparación | ✅ COMPLETADA | 18/18 (100%) | `phase0_detailed.md` |
+| Fase 1: Prototipo Mínimo | ✅ COMPLETADA | 20/20 (100%) | `phase1_detailed.md` |
+| Fase 2: Profundidad | 🔲 PENDIENTE | 0/32 (0%) | `phase2_detailed.md` |
+| Fase 3: Horror | 🔲 PENDIENTE | 0/8 (0%) | `phase3_detailed.md` |
+| Fase 4: Lanzamiento | 🔲 PENDIENTE | 0/8 (0%) | `phase4_detailed.md` |
+| **TOTAL** | ✅ | **38/86 (44%)** | |
 
 ---
 
@@ -200,4 +221,5 @@
 - **Fecha**: 27 de Junio, 2026
 - **Fase actual**: Fase 2 - Profundidad y Atmósfera (pendiente)
 - **Siguiente tarea**: 2.A.1 - MineralResource
-- **Plan detallado**: `docs/plans/phase2_detailed.md`
+- **Planes detallados**: `docs/plans/phase{0-4}_detailed.md`
+- **Tag actual**: v0.3.0-alpha (Fase 1 completa)
