@@ -18,9 +18,11 @@ var mineral_colors: Dictionary = {
 
 ## ─── Godot Callbacks ──────────────────────────────────
 func _ready() -> void:
-	GameState.inventory_changed.connect(_on_inventory_changed)
 	_create_slots()
-	call_deferred("_update_display")
+	await get_tree().process_frame
+	await get_tree().process_frame
+	GameState.inventory_changed.connect(_on_inventory_changed)
+	_update_display()
 
 ## ─── Métodos Privados ─────────────────────────────────
 func _create_slots() -> void:
@@ -48,9 +50,11 @@ func _create_slots() -> void:
 		slot.add_theme_stylebox_override("panel", style)
 		
 		var vbox: VBoxContainer = VBoxContainer.new()
+		vbox.name = "VBoxContainer"
 		vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 		
 		var color_rect: ColorRect = ColorRect.new()
+		color_rect.name = "ColorRect"
 		color_rect.custom_minimum_size = Vector2(40, 40)
 		color_rect.color = Color.TRANSPARENT
 		
