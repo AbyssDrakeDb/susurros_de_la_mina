@@ -2,7 +2,7 @@ extends Control
 class_name Hotbar
 
 ## ─── Configuración ───────────────────────────────────
-@export var slot_count: int = 5
+@export var slot_count: int = 6
 
 ## ─── Nodos ────────────────────────────────────────────
 @onready var slots_container: HBoxContainer = $SlotsContainer
@@ -13,7 +13,8 @@ var mineral_colors: Dictionary = {
 	"iron": Color(0.5, 0.5, 0.55),
 	"silver": Color(0.8, 0.8, 0.9),
 	"gold": Color(1.0, 0.84, 0.0),
-	"crystal": Color(0.4, 0.8, 1.0)
+	"crystal": Color(0.4, 0.8, 1.0),
+	"battery": Color(0.2, 0.8, 0.2)
 }
 
 ## ─── Godot Callbacks ──────────────────────────────────
@@ -97,6 +98,19 @@ func _update_display() -> void:
 				color_rect.color = Color.TRANSPARENT
 			if count_label:
 				count_label.text = "0"
+	
+	if GameState.battery_cells > 0:
+		var battery_slot: int = mini(minerals.size(), slot_count - 1)
+		if battery_slot < slots.size():
+			var slot: PanelContainer = slots[battery_slot]
+			var vbox: VBoxContainer = slot.get_node_or_null("VBoxContainer")
+			if vbox:
+				var color_rect: ColorRect = vbox.get_node_or_null("ColorRect")
+				var count_label: Label = vbox.get_node_or_null("CountLabel")
+				if color_rect:
+					color_rect.color = mineral_colors["battery"]
+				if count_label:
+					count_label.text = "P:%d" % GameState.battery_cells
 
 func _on_inventory_changed() -> void:
 	_update_display()

@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://dosev8p2clkxi"]
 
-[ext_resource type="Script" path="res://scripts/npc/npc.gd" id="1"]
+[ext_resource type="Script" uid="uid://cr5lmqsw35rsv" path="res://scripts/npc/npc.gd" id="1"]
 
 [sub_resource type="CapsuleShape3D" id="SubResource_capsule"]
 radius = 0.4
@@ -9,42 +9,36 @@ height = 1.8
 [sub_resource type="BoxShape3D" id="SubResource_interaction"]
 size = Vector3(4, 3, 4)
 
-[node name="NPC" type="StaticBody3D"]
+[node name="NPC" type="StaticBody3D" unique_id=1575284049]
 collision_layer = 8
-collision_mask = 1
 script = ExtResource("1")
-npc_name = "Comprador"
-dialogue_lines = Array[String](["Bienvenido a la mina.", "Tengo lo que necesitas.", "¿Qué llevas en tu mochila?"])
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1657037841]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("SubResource_capsule")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=286772080]
 
-[node name="InteractionArea" type="Area3D" parent="."]
+[node name="InteractionArea" type="Area3D" parent="." unique_id=500854556]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5222241)
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractionArea" unique_id=1620105768]
 shape = SubResource("SubResource_interaction")
 
-[node name="DialogueLabel" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-pixel_size = 0.005
-font_size = 40
+[node name="DialogueLabel" type="Label3D" parent="." unique_id=1014895890]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5701776, 0.95110345)
 text = "Comprador"
-horizontal_alignment = 1
+font_size = 40
 
-[node name="InteractHint" type="Label3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+[node name="InteractHint" type="Label3D" parent="." unique_id=1671351311]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5987487, 0)
 visible = false
 pixel_size = 0.004
-font_size = 28
-text = "[E] Hablar"
-horizontal_alignment = 1
 modulate = Color(1, 1, 0.6, 1)
+text = "[E] Hablar"
+font_size = 28
 
 [connection signal="body_entered" from="InteractionArea" to="." method="_on_interaction_area_body_entered"]
 [connection signal="body_exited" from="InteractionArea" to="." method="_on_interaction_area_body_exited"]

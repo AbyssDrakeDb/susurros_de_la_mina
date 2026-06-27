@@ -39,6 +39,16 @@ var upgrades: Dictionary = {
 	}
 }
 
+## ─── Items comprables ─────────────────────────────────
+var consumables: Array[Dictionary] = [
+	{
+		"id": "battery_cell",
+		"name": "Celda de Batería",
+		"description": "Recarga linterna al 100%",
+		"cost": 30
+	}
+]
+
 ## ─── Godot Callbacks ──────────────────────────────────
 func _ready() -> void:
 	close_button.pressed.connect(_on_close_pressed)
@@ -48,7 +58,7 @@ func _ready() -> void:
 ## ─── Métodos Públicos ─────────────────────────────────
 func _update_display() -> void:
 	if gold_label:
-		gold_label.text = "Oro: %d" % GameState.gold
+		gold_label.text = "Oro: %d | Pilas: %d" % [GameState.gold, GameState.battery_cells]
 	
 	if upgrade_list:
 		for child in upgrade_list.get_children():
@@ -56,7 +66,7 @@ func _update_display() -> void:
 		
 		for upgrade_id in upgrades:
 			var upgrade: Dictionary = upgrades[upgrade_id]
-			var is_purchased: bool = upgrade["purchased"]
+			var is_purchased: bool = GameState.has_upgrade(upgrade_id)
 			var can_afford: bool = GameState.gold >= upgrade["cost"]
 			
 			var row: HBoxContainer = HBoxContainer.new()
@@ -94,6 +104,49 @@ func _update_display() -> void:
 			row.add_child(info_vbox)
 			row.add_child(buy_button)
 			upgrade_list.add_child(row)
+		
+		var separator: HSeparator = HSeparator.new()
+		upgrade_list.add_child(separator)
+		
+		var items_title: Label = Label.new()
+		items_title.text = "Items"
+		items_title.theme_override_font_sizes.font_size = 20
+		upgrade_list.add_child(items_title)
+		
+		for item in consumables:
+			var row: HBoxContainer = HBoxContainer.new()
+			
+			var info_vbox: VBoxContainer = VBoxContainer.new()
+			info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			
+			var name_label: Label = Label.new()
+			name_label.text = item["name"]
+			name_label.theme_override_font_sizes.font_size = 18
+			
+			var desc_label: Label = Label.new()
+			desc_label.text = item["description"]
+			desc_label.theme_override_font_sizes.font_size = 14
+			
+			var cost_label: Label = Label.new()
+			cost_label.text = "Costo: %d oro" % item["cost"]
+			cost_label.theme_override_font_sizes.font_size = 14
+			
+			info_vbox.add_child(name_label)
+			info_vbox.add_child(desc_label)
+			info_vbox.add_child(cost_label)
+			
+			var buy_button: Button = Button.new()
+			var can_afford: bool = GameState.gold >= item["cost"]
+			if can_afford:
+				buy_button.text = "Comprar"
+				buy_button.pressed.connect(_on_buy_item_pressed.bind(item["id"]))
+			else:
+				buy_button.text = "Sin oro"
+				buy_button.disabled = true
+			
+			row.add_child(info_vbox)
+			row.add_child(buy_button)
+			upgrade_list.add_child(row)
 
 func _on_buy_pressed(upgrade_id: String) -> void:
 	var upgrade: Dictionary = upgrades[upgrade_id]
@@ -103,6 +156,16 @@ func _on_buy_pressed(upgrade_id: String) -> void:
 		_apply_upgrade(upgrade_id)
 		upgrade_purchased.emit(upgrade_id, upgrade["cost"])
 		_update_display()
+
+func _on_buy_item_pressed(item_id: String) -> void:
+	for item in consumables:
+		if item["id"] == item_id:
+			if GameState.spend_gold(item["cost"]):
+				match item_id:
+					"battery_cell":
+						GameState.add_battery(1)
+				_update_display()
+			break
 
 func _apply_upgrade(upgrade_id: String) -> void:
 	match upgrade_id:

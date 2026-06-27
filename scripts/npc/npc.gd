@@ -50,6 +50,11 @@ func _input(event: InputEvent) -> void:
 			_close_shop()
 		else:
 			_interact()
+	elif event.is_action_pressed("open_shop") and is_player_near:
+		if not is_shop_open and not is_trade_open:
+			_open_shop()
+		elif is_shop_open:
+			_close_shop()
 	elif event.is_action_pressed("ui_cancel") and (is_trade_open or is_shop_open):
 		_close_trade()
 		_close_shop()

@@ -11,6 +11,7 @@ signal health_changed(new_health: int)
 @export var max_health: int = 100
 @export var yield_amount: Vector2i = Vector2i(1, 3)
 @export var rarity: float = 1.0
+@export var battery_drop_chance: float = 0.15
 
 ## ─── Distancia para mostrar/ocultar label ─────────────
 @export var label_show_distance: float = 3.0
@@ -164,3 +165,6 @@ func _destroy() -> void:
 
 func _on_mined(_node: MineralNode, amount: int) -> void:
 	GameState.add_mineral(mineral_type, amount)
+	
+	if randf() < battery_drop_chance:
+		GameState.add_battery(1)

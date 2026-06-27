@@ -50,6 +50,9 @@ var inventory_used: int = 0
 ## ─── Economía ────────────────────────────────────────
 var gold: int = 0
 
+## ─── Items especiales ─────────────────────────────────
+var battery_cells: int = 0
+
 ## ─── Progresión ──────────────────────────────────────
 var flags: Dictionary = {}
 var unlocked_upgrades: Array[String] = []
@@ -169,6 +172,17 @@ func get_battery_multiplier() -> float:
 	if has_upgrade("battery_upgrade"):
 		return 1.5
 	return 1.0
+
+func add_battery(amount: int = 1) -> void:
+	battery_cells += amount
+	inventory_changed.emit()
+
+func use_battery() -> bool:
+	if battery_cells <= 0:
+		return false
+	battery_cells -= 1
+	inventory_changed.emit()
+	return true
 
 func reset_state() -> void:
 	health = max_health

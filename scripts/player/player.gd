@@ -81,6 +81,9 @@ func _input(event: InputEvent) -> void:
 	
 	if event.is_action_pressed("toggle_flashlight") and not is_paused:
 		_toggle_flashlight()
+	
+	if event.is_action_pressed("use_battery") and not is_paused:
+		_use_battery()
 
 func _physics_process(delta: float) -> void:
 	if is_paused:
@@ -201,6 +204,13 @@ func _toggle_flashlight() -> void:
 	flashlight_on = !flashlight_on
 	flashlight.visible = flashlight_on
 	flashlight_toggled.emit(flashlight_on)
+
+func _use_battery() -> void:
+	if GameState.use_battery():
+		flashlight_battery = 100.0
+		_update_hud_battery()
+		if flashlight_on:
+			flashlight.light_energy = 1.0
 
 func _update_flashlight(delta: float) -> void:
 	if flashlight_on:

@@ -14,12 +14,13 @@ func _ready() -> void:
 	GameState.gold_changed.connect(_on_gold_changed)
 	GameState.depth_changed.connect(_on_depth_changed)
 	GameState.mineral_changed.connect(_on_mineral_changed)
+	GameState.inventory_changed.connect(_on_inventory_changed)
 	_update_all()
 
 ## ─── Private Methods ──────────────────────────────────
 func _update_all() -> void:
 	health_bar.value = GameState.health
-	gold_counter.text = "Gold: %d" % GameState.gold
+	gold_counter.text = "Gold: %d | Pilas: %d" % [GameState.gold, GameState.battery_cells]
 	depth_label.text = "Depth: %dm" % GameState.current_depth
 	_update_mineral_count()
 
@@ -37,10 +38,13 @@ func _on_health_changed(new_health: int) -> void:
 	health_bar.value = new_health
 
 func _on_gold_changed(new_gold: int) -> void:
-	gold_counter.text = "Gold: %d" % new_gold
+	gold_counter.text = "Gold: %d | Pilas: %d" % [new_gold, GameState.battery_cells]
 
 func _on_depth_changed(new_depth: int) -> void:
 	depth_label.text = "Depth: %dm" % new_depth
 
 func _on_mineral_changed(_mineral_type: String, _new_amount: int) -> void:
 	_update_mineral_count()
+
+func _on_inventory_changed() -> void:
+	gold_counter.text = "Gold: %d | Pilas: %d" % [GameState.gold, GameState.battery_cells]
