@@ -73,18 +73,79 @@
 
 ## FASE 2: Profundidad y Atmósfera (4-5 meses) 🔲 PENDIENTE
 
+### 2.A — Data Layer: Recursos y Configuración
+
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
-| 2.1 | Generación procedural híbrida | 🔲 | Mixto handcrafted + procedural |
-| 2.2 | 3-4 biomas de mina | 🔲 | Superficie,浅層, profundo, crystalline |
-| 2.3 | Sistema de mejoras completo | 🔲 | 10+ mejoras unlockables |
-| 2.4 | Audio ambiental por bioma | 🔲 | Música + SFX diferentes |
-| 2.5 | Iluminación dinámica | 🔲 | Sombras, antorchas, bioluminiscencia |
-| 2.6 | Efectos de partículas | 🔲 | Polvo, chispas, cristales |
-| 2.7 | Postprocesado básico | 🔲 | Bloom, vignette, color grading |
-| 2.8 | **Demo jugable para itch.io** | 🔲 | Build release |
+| 2.A.1 | MineralResource (Custom Resource) | 🔲 | class_name con health, rarity, depth, mesh |
+| 2.A.2 | BiomeResource (Custom Resource) | 🔲 | 6 biomas: surface, shallow, crystal, abandoned, deep, cursed |
+| 2.A.3 | MineralSpawnEntry (Resource auxiliar) | 🔲 | Peso de spawn por mineral en cada bioma |
+| 2.A.4 | RoomTemplate (Custom Resource) | 🔲 | 5 tipos: entrance, mineral, story, challenge, boss |
+| 2.A.5 | Crear Room Templates Base | 🔲 | 8 escenas prefabricadas por bioma/tipo |
+| 2.A.6 | Actualizar MineralNode para MineralResource | 🔲 | Data-driven stats desde Resource |
 
-**Estado: 🔲 PENDIENTE**
+### 2.B — Generación Procedural: MineGenerator
+
+| # | Tarea | Estado | Notas |
+|---|-------|--------|-------|
+| 2.B.1 | MineGenerator Core (Autoload) | 🔲 | generate_chunk(), get_biome_at_depth() |
+| 2.B.2 | BiomeSelector (Lógica por Profundidad) | 🔲 | Mapeo depth→biome, integrar con GameState |
+| 2.B.3 | RoomSpawner (Colocación de Salas) | 🔲 | Instanciar templates, conectar con túneles |
+| 2.B.4 | MineralSpawner (Población de Minerales) | 🔲 | Spawn por peso de bioma, tipos correctos |
+| 2.B.5 | HazardSpawner (Trampas por Bioma) | 🔲 | Chance por bioma, daño escalado |
+| 2.B.6 | ChunkManager (Carga/Descarga) | 🔲 | Render distance, limpieza de memoria |
+| 2.B.7 | Integrar MineGenerator con CaveEntrance | 🔲 | Flujo Surface→Cave→Profundizar |
+
+### 2.C — Sistema de Biomas: Visuales y Transiciones
+
+| # | Tarea | Estado | Notas |
+|---|-------|--------|-------|
+| 2.C.1 | BiomeApplier (Aplicar Visual) | 🔲 | WorldEnvironment, fog, ambient por bioma |
+| 2.C.2 | BiomeTransitionDetector | 🔲 | Fade in/out entre biomas, sin parpadeos |
+| 2.C.3 | Crear Materiales por Bioma | 🔲 | 5 materiales base, colores y roughness |
+| 2.C.4 | BiomeDecorations (Props) | 🔲 | Decoración por bioma con assets existentes |
+| 2.C.5 | DepthTracker (Profundidad Jugador) | 🔲 | Actualizar GameState.current_depth en Y |
+
+### 2.D — Sistema de Horror: Fases y Atmósfera
+
+| # | Tarea | Estado | Notas |
+|---|-------|--------|-------|
+| 2.D.1 | HorrorPhaseManager | 🔲 | Fases por depth: NONE→LATENT→STALKING→HUNTING |
+| 2.D.2 | HorrorEventSystem (Efectos Visuales) | 🔲 | Whisper, shadow, footsteps, breathing, jumpscare |
+| 2.D.3 | HorrorAtmosphere (Ambiente Visual) | 🔲 | Niebla, oscuridad, música por fase |
+| 2.D.4 | Evento Mineral Maldito | 🔲 | Primera descubierta depth 10, flashbacks |
+
+### 2.E — Iluminación Dinámica
+
+| # | Tarea | Estado | Notas |
+|---|-------|--------|-------|
+| 2.E.1 | LightingManager (Autoload) | 🔲 | Setup por bioma, point lights, torches |
+| 2.E.2 | TorchSystem (Antorchas) | 🔲 | Parpadeo, humo, luz naranja |
+| 2.E.3 | CrystalGlow (Bioluminiscencia) | 🔲 | Pulso sinusoidal en cristales |
+
+### 2.F — Partículas y Postprocesado
+
+| # | Tarea | Estado | Notas |
+|---|-------|--------|-------|
+| 2.F.1 | ParticleEffects | 🔲 | Polvo, chispas, cristales, humo, aura |
+| 2.F.2 | PostProcessing | 🔲 | Bloom, vignette, color grading por bioma |
+
+### 2.G — Audio Ambiental por Bioma
+
+| # | Tarea | Estado | Notas |
+|---|-------|--------|-------|
+| 2.G.1 | BiomeAudioManager | 🔲 | Crossfade música, SFX ambiental por bioma |
+| 2.G.2 | Asignar Pistas de Audio | 🔲 | Organizar audio existente por bioma |
+
+### 2.H — Integración y Demo
+
+| # | Tarea | Estado | Notas |
+|---|-------|--------|-------|
+| 2.H.1 | Integrar Sistema Completo | 🔲 | Reemplazar cueva estática, flujo completo |
+| 2.H.2 | Balance y Tuning | 🔲 | Ajustar valores post-testing |
+| 2.H.3 | Build para itch.io | 🔲 | Windows + Web, subir demo |
+
+**Estado: 🔲 PENDIENTE (0/32 tareas)**
 
 ---
 
@@ -127,15 +188,16 @@
 | Fase | Estado | Progreso |
 |------|--------|----------|
 | Fase 0: Preparación | ✅ COMPLETADA | 18/18 (100%) |
-| Fase 1: Prototipo Mínimo | 🔄 EN PROGRESO | 20/20 (100%) |
-| Fase 2: Profundidad | 🔲 PENDIENTE | 0/8 (0%) |
+| Fase 1: Prototipo Mínimo | ✅ COMPLETADA | 20/20 (100%) |
+| Fase 2: Profundidad | 🔲 PENDIENTE | 0/32 (0%) |
 | Fase 3: Horror | 🔲 PENDIENTE | 0/8 (0%) |
 | Fase 4: Lanzamiento | 🔲 PENDIENTE | 0/8 (0%) |
-| **TOTAL** | 🔄 | **28/62 (45%)** |
+| **TOTAL** | 🔄 | **38/86 (44%)** |
 
 ---
 
 ## Última Actualización
-- **Fecha**: 26 de Junio, 2026
-- **Fase actual**: Fase 1 - Prototipo Mínimo
-- **Siguiente tarea**: 1.7 - Superficie inicial
+- **Fecha**: 27 de Junio, 2026
+- **Fase actual**: Fase 2 - Profundidad y Atmósfera (pendiente)
+- **Siguiente tarea**: 2.A.1 - MineralResource
+- **Plan detallado**: `docs/plans/phase2_detailed.md`
