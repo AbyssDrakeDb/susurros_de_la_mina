@@ -7,15 +7,16 @@ extends Node
 
 func _ready() -> void:
 	await get_tree().process_frame
-	_generate_collisions()
+	await get_tree().process_frame
+	if is_inside_tree():
+		_generate_collisions()
 
 func _generate_collisions() -> void:
 	var parent: Node3D = get_parent()
-	if parent == null:
+	if parent == null or not parent.is_inside_tree():
 		return
 	
 	_collect_meshes(parent)
-	print("[GenerateCollisions] Colisiones generadas para cueva")
 
 func _collect_meshes(node: Node) -> void:
 	for child in node.get_children():
@@ -26,6 +27,8 @@ func _collect_meshes(node: Node) -> void:
 
 func _create_collision_for_mesh(mesh_instance: MeshInstance3D) -> void:
 	if mesh_instance.mesh == null:
+		return
+	if not mesh_instance.is_inside_tree():
 		return
 	
 	var static_body: StaticBody3D = StaticBody3D.new()

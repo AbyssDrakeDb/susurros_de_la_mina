@@ -22,23 +22,24 @@ func connect_rooms(room_a: Node3D, room_b: Node3D, tunnel_scene: PackedScene = n
 	if room_a == null or room_b == null:
 		return null
 	
+	if room_a.get_parent() == null:
+		return null
+	
 	var pos_a: Vector3 = room_a.position
 	var pos_b: Vector3 = room_b.position
 	var midpoint: Vector3 = (pos_a + pos_b) / 2.0
 	
 	var parent: Node3D = room_a.get_parent()
-	if parent == null:
-		return null
 	
 	if tunnel_scene != null:
 		var tunnel: Node3D = tunnel_scene.instantiate() as Node3D
 		if tunnel != null:
 			tunnel.position = midpoint
+			parent.add_child(tunnel)
+			tunnel.owner = parent.owner
 			var direction: Vector3 = (pos_b - pos_a).normalized()
 			if direction.length() > 0.001:
 				tunnel.look_at(tunnel.position + direction, Vector3.UP)
-			parent.add_child(tunnel)
-			tunnel.owner = parent.owner
 			return tunnel
 	
 	return _create_default_tunnel(midpoint, pos_b, parent)
@@ -47,9 +48,6 @@ func connect_rooms(room_a: Node3D, room_b: Node3D, tunnel_scene: PackedScene = n
 func _create_default_tunnel(midpoint: Vector3, look_target: Vector3, parent: Node3D) -> Node3D:
 	var tunnel: StaticBody3D = StaticBody3D.new()
 	tunnel.position = midpoint
-	var direction: Vector3 = (look_target - midpoint).normalized()
-	if direction.length() > 0.001:
-		tunnel.look_at(tunnel.position + direction, Vector3.UP)
 	
 	var shape: CollisionShape3D = CollisionShape3D.new()
 	var box: BoxShape3D = BoxShape3D.new()
@@ -69,5 +67,9 @@ func _create_default_tunnel(midpoint: Vector3, look_target: Vector3, parent: Nod
 	
 	parent.add_child(tunnel)
 	tunnel.owner = parent.owner
+	
+	var direction: Vector3 = (look_target - midpoint).normalized()
+	if direction.length() > 0.001:
+		tunnel.look_at(tunnel.position + direction, Vector3.UP)
 	
 	return tunnel

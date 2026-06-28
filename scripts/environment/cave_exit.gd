@@ -21,8 +21,8 @@ func _input(event: InputEvent) -> void:
 
 ## ─── Métodos Privados ─────────────────────────────────
 func _exit_cave() -> void:
-	if MineGenerator != null:
-		MineGenerator.clear_all_chunks()
+	MineGenerator.clear_all_chunks()
+	MineGenerator.chunk_manager.chunk_container = null
 	GameState.change_depth(0)
 	TransitionManager.go_to_scene(target_scene)
 

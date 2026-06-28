@@ -24,6 +24,9 @@ func initialize(gen: Node) -> void:
 func set_chunk_container(container: Node3D) -> void:
 	chunk_container = container
 
+func _is_container_valid() -> bool:
+	return chunk_container != null and is_instance_valid(chunk_container) and chunk_container.is_inside_tree()
+
 func get_chunk_key(depth: int) -> String:
 	return "chunk_%d" % depth
 
@@ -33,7 +36,10 @@ func is_chunk_generated(depth: int) -> bool:
 func get_chunk(depth: int) -> Node3D:
 	var key: String = get_chunk_key(depth)
 	if generated_chunks.has(key):
-		return generated_chunks[key]
+		var chunk: Node3D = generated_chunks[key]
+		if chunk != null and is_instance_valid(chunk):
+			return chunk
+		generated_chunks.erase(key)
 	return null
 
 func generate_chunk_at_depth(depth: int) -> Node3D:
@@ -42,6 +48,9 @@ func generate_chunk_at_depth(depth: int) -> Node3D:
 	
 	if _mine_generator == null:
 		push_error("ChunkManager: MineGenerator no inicializado")
+		return null
+	
+	if not _is_container_valid():
 		return null
 	
 	var chunk: Node3D = _mine_generator.generate_chunk(depth, chunk_container)
@@ -92,6 +101,9 @@ func _on_depth_changed(new_depth: int) -> void:
 	_update_visible_chunks()
 
 func _update_visible_chunks() -> void:
+	if not _is_container_valid():
+		return
+	
 	for d in range(current_depth - render_distance, current_depth + render_distance + 1):
 		if d >= 0 and d <= 10 and not is_chunk_generated(d):
 			generate_chunk_at_depth(d)
