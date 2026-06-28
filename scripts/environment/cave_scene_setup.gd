@@ -29,7 +29,7 @@ func _setup_procedural_generation() -> void:
 		MineGenerator.chunk_manager._update_visible_chunks()
 
 func _clear_hand_crafted_content() -> void:
-	for node_name in ["Minerals", "Hazards", "Pickups"]:
+	for node_name in ["CaveRoom", "Minerals", "Hazards", "Pickups"]:
 		var node: Node3D = get_node_or_null(node_name)
 		if node != null:
 			node.queue_free()
