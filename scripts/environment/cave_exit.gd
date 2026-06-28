@@ -1,9 +1,8 @@
 extends Area3D
-class_name CaveEntrance
+class_name CaveExit
 
 ## ─── Configuración ───────────────────────────────────
-@export var target_scene: String = "cave"
-@export var start_depth: int = 1
+@export var target_scene: String = "surface"
 
 ## ─── Estado ───────────────────────────────────────────
 var is_player_inside: bool = false
@@ -18,11 +17,13 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("interact") and is_player_inside:
-		_enter_cave()
+		_exit_cave()
 
 ## ─── Métodos Privados ─────────────────────────────────
-func _enter_cave() -> void:
-	GameState.change_depth(start_depth)
+func _exit_cave() -> void:
+	if MineGenerator != null:
+		MineGenerator.clear_all_chunks()
+	GameState.change_depth(0)
 	TransitionManager.go_to_scene(target_scene)
 
 func _on_body_entered(body: Node3D) -> void:

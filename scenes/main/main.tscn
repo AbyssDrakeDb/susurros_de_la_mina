@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://b8w2j1k5n3r7" path="res://scenes/minerals/mineral_node.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/environment/cave_room.tscn" id="5"]
 [ext_resource type="Script" uid="uid://iokg8oi60372" path="res://scripts/environment/cave_entrance.gd" id="6"]
+[ext_resource type="Script" path="res://scripts/environment/cave_exit.gd" id="8"]
 [ext_resource type="Script" uid="uid://dl4q1306whr18" path="res://scripts/environment/hazard.gd" id="7"]
 
 [sub_resource type="BoxShape3D" id="SubResource_exit"]
@@ -33,7 +34,7 @@ albedo_color = Color(0.6, 0.2, 0.1, 1)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 5)
 collision_layer = 8
 collision_mask = 2
-script = ExtResource("6")
+script = ExtResource("8")
 target_scene = "surface"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CaveExit" unique_id=1993816058]
