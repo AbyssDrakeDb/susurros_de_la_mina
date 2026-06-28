@@ -2,7 +2,7 @@ extends Node
 class_name ChunkManagerClass
 
 ## ─── Configuración ───────────────────────────────────
-@export var chunk_size: int = 50
+@export var chunk_size: int = 30
 @export var render_distance: int = 2
 
 ## ─── Estado ──────────────────────────────────────────
@@ -44,16 +44,12 @@ func generate_chunk_at_depth(depth: int) -> Node3D:
 		push_error("ChunkManager: MineGenerator no inicializado")
 		return null
 	
-	var chunk: Node3D = _mine_generator.generate_chunk(depth)
+	var chunk: Node3D = _mine_generator.generate_chunk(depth, chunk_container)
 	if chunk == null:
 		return null
 	
 	var key: String = get_chunk_key(depth)
 	generated_chunks[key] = chunk
-	
-	if chunk_container != null:
-		chunk_container.add_child(chunk)
-		chunk.owner = chunk_container.owner
 	
 	return chunk
 

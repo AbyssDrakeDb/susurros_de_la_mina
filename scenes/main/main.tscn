@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://scenes/environment/cave_room.tscn" id="5"]
 [ext_resource type="Script" uid="uid://iokg8oi60372" path="res://scripts/environment/cave_entrance.gd" id="6"]
 [ext_resource type="Script" path="res://scripts/environment/cave_exit.gd" id="8"]
+[ext_resource type="Script" path="res://scripts/environment/cave_scene_setup.gd" id="9"]
 [ext_resource type="Script" uid="uid://dl4q1306whr18" path="res://scripts/environment/hazard.gd" id="7"]
 
 [sub_resource type="BoxShape3D" id="SubResource_exit"]
@@ -27,6 +28,7 @@ size = Vector3(2, 0.5, 2)
 albedo_color = Color(0.6, 0.2, 0.1, 1)
 
 [node name="Main" type="Node3D" unique_id=231579914]
+script = ExtResource("9")
 
 [node name="CaveRoom" parent="." unique_id=256983870 instance=ExtResource("5")]
 

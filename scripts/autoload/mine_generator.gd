@@ -2,7 +2,7 @@ extends Node
 class_name MineGeneratorClass
 
 ## ─── Configuración ───────────────────────────────────
-@export var chunk_size: int = 50
+@export var chunk_size: int = 30
 @export var render_distance: int = 2
 @export var mine_depth: int = 10
 
@@ -17,6 +17,7 @@ var chunk_manager: ChunkManagerClass
 var current_depth: int = 0
 var generated_chunks: Dictionary = {}
 var is_initialized: bool = false
+var chunk_container: Node3D = null
 
 ## ─── RNG ─────────────────────────────────────────────
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -55,11 +56,18 @@ func _setup_subsystems() -> void:
 	chunk_manager.initialize(self)
 
 ## ─── Métodos Públicos ────────────────────────────────
-func generate_chunk(depth: int) -> Node3D:
+func setup(container: Node3D) -> void:
+	chunk_container = container
+	chunk_manager.set_chunk_container(container)
+
+func generate_chunk(depth: int, parent: Node3D = null) -> Node3D:
 	_rng.seed = _get_chunk_seed(depth)
 	
 	var chunk: Node3D = Node3D.new()
 	chunk.name = "Chunk_%d" % depth
+	
+	if parent != null:
+		parent.add_child(chunk)
 	
 	var biome: BiomeResource = biome_selector.get_biome_at_depth(depth)
 	
@@ -71,7 +79,7 @@ func generate_chunk(depth: int) -> Node3D:
 	for i in range(room_count):
 		var template: RoomTemplate = _pick_room_template(biome, depth)
 		var offset: float = (i - room_count / 2.0) * room_spacing
-		var room_pos: Vector3 = Vector3(offset, 0.0, -depth * chunk_size)
+		var room_pos: Vector3 = Vector3(offset, 0.0, -i * room_spacing)
 		
 		var room: Node3D = room_spawner.spawn_room(template, room_pos, chunk)
 		if room == null:
@@ -108,6 +116,7 @@ func clear_all_chunks() -> void:
 	chunk_manager.clear_all()
 
 func set_chunk_container(container: Node3D) -> void:
+	chunk_container = container
 	chunk_manager.set_chunk_container(container)
 
 ## ─── Métodos Privados ────────────────────────────────
