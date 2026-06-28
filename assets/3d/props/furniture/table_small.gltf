@@ -20,19 +20,19 @@
     ],
     "materials" : [
         {
-            "name" : "furniture_texture",
+            "name" : "texture",
             "pbrMetallicRoughness" : {
                 "baseColorTexture" : {
                     "index" : 0
                 },
                 "metallicFactor" : 0,
-                "roughnessFactor" : 0.5
+                "roughnessFactor" : 0.44999998807907104
             }
         }
     ],
     "meshes" : [
         {
-            "name" : "Cube.005",
+            "name" : "table_small",
             "primitives" : [
                 {
                     "attributes" : {
@@ -55,69 +55,69 @@
     "images" : [
         {
             "mimeType" : "image/png",
-            "name" : "furniturebits_texture",
-            "uri" : "furniturebits_texture.png"
+            "name" : "dungeon_texture",
+            "uri" : "dungeon_texture.png"
         }
     ],
     "accessors" : [
         {
             "bufferView" : 0,
             "componentType" : 5126,
-            "count" : 260,
+            "count" : 348,
             "max" : [
-                0.5,
+                0.4991810619831085,
                 1,
-                0.5
+                0.4997994303703308
             ],
             "min" : [
-                -0.5,
-                -7.450580596923828e-09,
-                -0.5
+                -0.5008190274238586,
+                0,
+                -0.5002005696296692
             ],
             "type" : "VEC3"
         },
         {
             "bufferView" : 1,
             "componentType" : 5126,
-            "count" : 260,
+            "count" : 348,
             "type" : "VEC2"
         },
         {
             "bufferView" : 2,
             "componentType" : 5126,
-            "count" : 260,
+            "count" : 348,
             "type" : "VEC3"
         },
         {
             "bufferView" : 3,
             "componentType" : 5123,
-            "count" : 504,
+            "count" : 576,
             "type" : "SCALAR"
         }
     ],
     "bufferViews" : [
         {
             "buffer" : 0,
-            "byteLength" : 3120,
+            "byteLength" : 4176,
             "byteOffset" : 0,
             "target" : 34962
         },
         {
             "buffer" : 0,
-            "byteLength" : 2080,
-            "byteOffset" : 3120,
+            "byteLength" : 2784,
+            "byteOffset" : 4176,
             "target" : 34962
         },
         {
             "buffer" : 0,
-            "byteLength" : 3120,
-            "byteOffset" : 5200,
+            "byteLength" : 4176,
+            "byteOffset" : 6960,
             "target" : 34962
         },
         {
             "buffer" : 0,
-            "byteLength" : 1008,
-            "byteOffset" : 8320,
+            "byteLength" : 1152,
+            "byteOffset" : 11136,
             "target" : 34963
         }
     ],
@@ -129,7 +129,7 @@
     ],
     "buffers" : [
         {
-            "byteLength" : 9328,
+            "byteLength" : 12288,
             "uri" : "table_small.bin"
         }
     ]
