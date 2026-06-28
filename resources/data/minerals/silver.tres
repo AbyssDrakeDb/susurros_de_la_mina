@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="MineralResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/data/mineral_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+mineral_id = "silver"
+display_name = "Plata"
+health = 175
+mining_damage = 20
+yield_amount = Vector2i(1, 2)
+sell_price = 25
+buy_price = 50
+rarity = 1
+color = Color(0.8, 0.8, 0.9, 1)
+depth_min = 4
+depth_max = 5
+spawn_weight = 0.5
+battery_drop_chance = 0.10

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="MineralResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/data/mineral_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+mineral_id = "gold"
+display_name = "Oro"
+health = 200
+mining_damage = 25
+yield_amount = Vector2i(1, 2)
+sell_price = 50
+buy_price = 100
+rarity = 2
+color = Color(1.0, 0.84, 0.0, 1)
+depth_min = 6
+depth_max = 7
+spawn_weight = 0.3
+battery_drop_chance = 0.08

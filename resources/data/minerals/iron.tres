@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="MineralResource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://resources/data/mineral_resource.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+mineral_id = "iron"
+display_name = "Hierro"
+health = 150
+mining_damage = 15
+yield_amount = Vector2i(1, 3)
+sell_price = 10
+buy_price = 20
+rarity = 0
+color = Color(0.5, 0.5, 0.55, 1)
+depth_min = 1
+depth_max = 3
+spawn_weight = 0.8
+battery_drop_chance = 0.12

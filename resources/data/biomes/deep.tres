@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BiomeResource" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://resources/data/biome_resource.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/data/spawn_entries/deep_crystal.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+biome_id = "deep"
+display_name = "Profundo"
+depth_min = 8
+depth_max = 9
+ambient_color = Color(0.15, 0.15, 0.2, 1)
+ambient_energy = 0.2
+fog_color = Color(0.05, 0.05, 0.08, 1)
+fog_density = 0.04
+mineral_table = [ExtResource("2")]
+hazard_chance = 0.35

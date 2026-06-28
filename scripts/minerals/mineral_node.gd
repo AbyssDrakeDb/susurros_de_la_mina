@@ -7,6 +7,7 @@ signal destroyed(node: MineralNode)
 signal health_changed(new_health: int)
 
 ## ─── Exported Properties ─────────────────────────────
+@export var mineral_data: MineralResource
 @export var mineral_type: String = "copper"
 @export var max_health: int = 100
 @export var yield_amount: Vector2i = Vector2i(1, 3)
@@ -31,7 +32,7 @@ var _healthbar_fill_material: StandardMaterial3D
 @onready var health_fill: MeshInstance3D = $HealthBar3D/HealthFill
 @onready var health_label: Label3D = $HealthBar3D/HealthLabel
 
-## ─── Colores por tipo ────────────────────────────────
+## ─── Colores por tipo (fallback) ──────────────────────
 const MINERAL_COLORS: Dictionary = {
 	"copper": Color(0.8, 0.4, 0.2),
 	"iron": Color(0.5, 0.5, 0.55),
@@ -42,6 +43,7 @@ const MINERAL_COLORS: Dictionary = {
 
 ## ─── Godot Callbacks ──────────────────────────────────
 func _ready() -> void:
+	_apply_mineral_data()
 	current_health = max_health
 	_create_unique_materials()
 	_update_health_bar()
@@ -62,9 +64,17 @@ func _process(_delta: float) -> void:
 	health_label.visible = dist <= label_show_distance and dist >= label_hide_distance
 
 ## ─── Private Methods ──────────────────────────────────
+func _apply_mineral_data() -> void:
+	if mineral_data != null:
+		mineral_type = mineral_data.mineral_id
+		max_health = mineral_data.health
+		yield_amount = mineral_data.yield_amount
+		battery_drop_chance = mineral_data.battery_drop_chance
+		rarity = float(mineral_data.rarity)
+
 func _create_unique_materials() -> void:
 	_body_material = StandardMaterial3D.new()
-	_body_material.albedo_color = MINERAL_COLORS.get(mineral_type, Color.WHITE)
+	_body_material.albedo_color = _get_mineral_color()
 	mesh.material_override = _body_material
 	
 	_healthbar_fill_material = StandardMaterial3D.new()
@@ -78,6 +88,11 @@ func _create_unique_materials() -> void:
 			var bg_mat: StandardMaterial3D = StandardMaterial3D.new()
 			bg_mat.albedo_color = Color(0.1, 0.1, 0.1)
 			bg.material_override = bg_mat
+
+func _get_mineral_color() -> Color:
+	if mineral_data != null and mineral_data.color != Color.WHITE:
+		return mineral_data.color
+	return MINERAL_COLORS.get(mineral_type, Color.WHITE)
 
 func _update_health_bar() -> void:
 	if health_bar_3d == null or _healthbar_fill_material == null:
