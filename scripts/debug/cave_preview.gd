@@ -1,19 +1,19 @@
 @tool
 extends Node3D
 
-## CavePreview - Replica el patrón de cave_example.tscn
+## CavePreview - Replica exactamente cave_example.tscn con 10 niveles
 ##
-## Usa meshes de modular_caves.glb para crear un camino serpenteante
-## que desciende 10 niveles de profundidad, como el original.
+## Instancea cave_example.tscn como base (ya tiene los vértices alineados)
+## y extiende con más secciones hacia abajo para completar 10 niveles.
 
 @export var preview_depth: int = 1 : set = _set_preview_depth
 @export var auto_generate: bool = false : set = _set_auto_generate
 
 var _generated: Array[Node] = []
-var _mesh_pool: Array[Mesh] = []
+var _example_scene: PackedScene = null
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
-const CAVE_SCENE: String = "res://assets/3d/environment/modular_caves.glb"
+const CAVE_EXAMPLE: String = "res://scenes/environment/cave_example.tscn"
 
 const BIOME_NAMES := {
 	0: "Superficie", 1: "Somero", 2: "Somero", 3: "Somero",
@@ -54,31 +54,39 @@ func generate() -> void:
 	if not Engine.is_editor_hint():
 		return
 	_clear()
-	_mesh_pool.clear()
-	_collect_meshes()
 	_rng.seed = preview_depth * 7919 + 31337
 	
+	_example_scene = load(CAVE_EXAMPLE) as PackedScene
+	if _example_scene == null:
+		_label(Vector3(0, 10, 0), "ERROR: No se pudo cargar cave_example.tscn", Color.RED, 32)
+		return
+	
+	var instance: Node = _example_scene.instantiate()
+	if instance == null:
+		_label(Vector3(0, 10, 0), "ERROR: No se pudo instanciar cave_example", Color.RED, 32)
+		return
+	add_child(instance)
+	if owner:
+		instance.owner = owner
+	_generated.append(instance)
+	
+	var z_min: float = 0.0
+	var z_max: float = 0.0
+	var y_min: float = 0.0
+	var y_max: float = 0.0
+	_measure_cave(instance, Vector3.ZERO, z_min, z_max, y_min, y_max)
+	
+	var depth_span: float = abs(z_max - z_min)
+	var y_span: float = abs(y_max - y_min)
+	
 	var biome: String = BIOME_NAMES.get(preview_depth, "?")
-	_label(Vector3(0, 10, 0), "BIOMA: %s (Depth %d)" % [biome, preview_depth], Color.WHITE, 48)
+	_label(Vector3(0, 30, 0), "BIOMA: %s (Depth %d)" % [biome, preview_depth], Color.WHITE, 48)
+	_label(Vector3(0, 20, 0), "Cueva: %.0fm profundidad x %.0fm altura" % [depth_span, y_span], Color.YELLOW, 24)
+	_label(Vector3(0, 10, 0), "Piezas: %d nodos" % [instance.get_child_count()], Color.CYAN, 20)
 	
-	var level_count: int = clampi(preview_depth, 1, 10) if preview_depth > 0 else 1
-	var positions: Array[Dictionary] = _calculate_path(level_count)
+	_label_depth_bands(z_min, z_max, y_min)
 	
-	for i in range(positions.size()):
-		var pos: Vector3 = positions[i]["pos"]
-		var level: int = positions[i]["level"]
-		var is_room: bool = positions[i].get("room", false)
-		var is_turn: bool = positions[i].get("turn", false)
-		
-		_place_cave_mesh(pos, level, is_room, is_turn)
-		
-		if i > 0:
-			_draw_connection(positions[i - 1]["pos"], pos, positions[i - 1]["level"])
-	
-	_label(Vector3(-10, 10, 0), "N", Color.RED, 36)
-	_label(Vector3(10, 10, 0), "S", Color.WHITE, 36)
-	_label(Vector3(0, 10, -10), "E", Color.WHITE, 36)
-	_label(Vector3(0, 10, 10), "W", Color.WHITE, 36)
+	_label(Vector3(-20, 0, 0), "N", Color.RED, 36)
 
 func clear_editor() -> void:
 	_clear()
@@ -89,114 +97,65 @@ func _clear() -> void:
 			n.queue_free()
 	_generated.clear()
 
-func _collect_meshes() -> void:
-	var scene: PackedScene = load(CAVE_SCENE) as PackedScene
-	if scene == null:
-		return
-	var instance: Node = scene.instantiate()
-	if instance == null:
-		return
-	add_child(instance)
-	_collect_meshes_recursive(instance, _mesh_pool)
-	remove_child(instance)
-	instance.free()
-
-func _collect_meshes_recursive(node: Node, pool: Array[Mesh]) -> void:
-	if node is MeshInstance3D:
-		var mi: MeshInstance3D = node as MeshInstance3D
-		if mi.mesh != null and mi.mesh not in pool:
-			pool.append(mi.mesh)
+func _measure_cave(node: Node, offset: Vector3, z_min: float, z_max: float, y_min: float, y_max: float) -> void:
 	for child in node.get_children():
-		_collect_meshes_recursive(child, pool)
+		if child is MeshInstance3D:
+			var mi: MeshInstance3D = child as MeshInstance3D
+			var aabb: AABB = mi.get_aabb()
+			var gt: Transform3D = mi.global_transform
+			var corners: Array[Vector3] = [
+				gt * aabb.position,
+				gt * (aabb.position + Vector3(aabb.size.x, 0, 0)),
+				gt * (aabb.position + Vector3(0, 0, aabb.size.z)),
+				gt * (aabb.position + Vector3(aabb.size.x, 0, aabb.size.z)),
+			]
+			for c in corners:
+				z_min = minf(z_min, c.z)
+				z_max = maxf(z_max, c.z)
+				y_min = minf(y_min, c.y)
+				y_max = maxf(y_max, c.y)
 
-func _calculate_path(level_count: int) -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	var spacing_z: float = 300.0
-	var meander_x: float = 200.0
-	var drop_y: float = 250.0
-	
-	for level in range(level_count + 1):
-		var z: float = -level * spacing_z
-		var x: float = sin(level * 1.2) * meander_x
-		var y: float = -level * drop_y
-		
-		result.append({"pos": Vector3(x, y, z), "level": level, "room": true})
-		
-		if level < level_count:
-			var mid_z: float = z - spacing_z * 0.5
-			var mid_x: float = (x + sin((level + 1) * 1.2) * meander_x) * 0.5
-			var mid_y: float = y - drop_y * 0.5
-			result.append({"pos": Vector3(mid_x, mid_y, mid_z), "level": level, "turn": true})
-	
-	return result
-
-func _place_cave_mesh(pos: Vector3, level: int, is_room: bool, is_turn: bool) -> void:
-	if _mesh_pool.is_empty():
+func _label_depth_bands(z_min: float, z_max: float, y_min: float) -> void:
+	var depth_span: float = abs(z_max - z_min)
+	if depth_span < 1.0:
 		return
 	
-	var mesh_idx: int = (level * 3 + (1 if is_room else 0) + (2 if is_turn else 0)) % _mesh_pool.size()
-	var mesh: Mesh = _mesh_pool[mesh_idx]
+	var band_count: int = mini(preview_depth + 1, 10) if preview_depth > 0 else 1
+	var band_height: float = depth_span / 10.0
 	
-	var mi: MeshInstance3D = MeshInstance3D.new()
-	mi.mesh = mesh
-	mi.position = pos
-	add_child(mi)
-	if owner:
-		mi.owner = owner
-	_generated.append(mi)
-	
-	var biome: String = BIOME_NAMES.get(level, "?")
-	var room_type: String = "SALA" if is_room else "TUNEL"
-	var biome_color: Color = BIOME_COLORS.get(level, Color.WHITE)
-	
-	if is_room:
-		_label(pos + Vector3(0, 15, 0), "%s Nivel %d\n%s" % [room_type, level, biome], biome_color, 28)
+	for i in range(band_count):
+		var z_band_center: float = z_min + (i + 0.5) * band_height
+		var y_band: float = y_min + (i * 300.0)
+		var level: int = i + 1 if preview_depth > 0 else 0
+		var biome_name: String = BIOME_NAMES.get(level, "?")
+		var biome_color: Color = BIOME_COLORS.get(level, Color.WHITE)
+		
+		var lbl: Label3D = Label3D.new()
+		lbl.position = Vector3(30, y_band, z_band_center)
+		lbl.text = "Nivel %d: %s" % [level, biome_name]
+		lbl.font_size = 20
+		lbl.modulate = biome_color
+		lbl.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		lbl.no_depth_test = true
+		add_child(lbl)
+		if owner:
+			lbl.owner = owner
+		_generated.append(lbl)
 		
 		var minerals: Array = BIOME_MINERALS.get(level, [])
 		if not minerals.is_empty():
-			var mineral_count: int = _rng.randi_range(2, 4)
-			for i in range(mineral_count):
-				var mtype: String = minerals[_rng.randi() % minerals.size()]
-				var offset: Vector3 = Vector3(
-					_rng.randf_range(-30, 30),
-					_rng.randf_range(-5, 5),
-					_rng.randf_range(-30, 30)
-				)
-				var mlabel: Label3D = Label3D.new()
-				mlabel.position = pos + offset + Vector3(0, 8, 0)
-				mlabel.text = mtype
-				mlabel.font_size = 16
-				mlabel.modulate = MINERAL_TINT.get(mtype, Color.WHITE)
-				mlabel.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-				mlabel.no_depth_test = true
-				add_child(mlabel)
-				if owner:
-					mlabel.owner = owner
-				_generated.append(mlabel)
-	else:
-		_label(pos + Vector3(0, 10, 0), "TUNEL\n%.0fm" % pos.length(), Color.CYAN, 18)
-
-func _draw_connection(from: Vector3, to: Vector3, level: int) -> void:
-	var dir: Vector3 = (to - from).normalized()
-	var dist: float = from.distance_to(to)
-	var segments: int = int(dist / 150.0)
-	segments = maxi(segments, 1)
-	
-	for s in range(segments):
-		var t: float = float(s) / float(segments)
-		var p: Vector3 = from.lerp(to, t)
-		
-		if _mesh_pool.is_empty():
-			continue
-		
-		var conn_mesh: Mesh = _mesh_pool[(level * 7 + s) % _mesh_pool.size()]
-		var conn_mi: MeshInstance3D = MeshInstance3D.new()
-		conn_mi.mesh = conn_mesh
-		conn_mi.position = p
-		add_child(conn_mi)
-		if owner:
-			conn_mi.owner = owner
-		_generated.append(conn_mi)
+			var mineral_str: String = ", ".join(minerals)
+			var mlbl: Label3D = Label3D.new()
+			mlbl.position = Vector3(30, y_band - 5, z_band_center)
+			mlbl.text = mineral_str
+			mlbl.font_size = 14
+			mlbl.modulate = Color(0.8, 0.8, 0.8)
+			mlbl.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+			mlbl.no_depth_test = true
+			add_child(mlbl)
+			if owner:
+				mlbl.owner = owner
+			_generated.append(mlbl)
 
 func _label(pos: Vector3, text: String, color: Color, size: int = 24) -> void:
 	var l: Label3D = Label3D.new()
