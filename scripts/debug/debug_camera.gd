@@ -16,6 +16,7 @@ var _player: CharacterBody3D = null
 var _debug_light: DirectionalLight3D = null
 var _env: Environment = null
 var _original_ambient_energy: float = 0.0
+var _mouse_motion: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -23,6 +24,11 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_F5:
 		_toggle_debug()
+		get_viewport().set_input_as_handled()
+		return
+	
+	if is_active and event is InputEventMouseMotion:
+		_mouse_motion = event.relative
 
 func _process(delta: float) -> void:
 	if not is_active:
@@ -33,14 +39,14 @@ func _process(delta: float) -> void:
 	
 	_handle_mouse_input()
 	_handle_keyboard_input(delta)
+	_mouse_motion = Vector2.ZERO
 
 func _handle_mouse_input() -> void:
-	if Input.get_mouse_mode() != Input.MOUSE_MODE_CAPTURED:
+	if _mouse_motion.length() < 0.001:
 		return
 	
-	var motion: Vector2 = Input.get_last_mouse_motion()
-	_camera.rotate_y(-motion.x * mouse_sensitivity)
-	_camera.rotate_object_local(Vector3.RIGHT, -motion.y * mouse_sensitivity)
+	_camera.rotate_y(-_mouse_motion.x * mouse_sensitivity)
+	_camera.rotate_object_local(Vector3.RIGHT, -_mouse_motion.y * mouse_sensitivity)
 	_camera.rotation.x = clampf(_camera.rotation.x, -PI / 2.0, PI / 2.0)
 
 func _handle_keyboard_input(delta: float) -> void:
