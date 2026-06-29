@@ -83,8 +83,6 @@ func _generate_preview() -> void:
 		if i > 0:
 			var prev_pos: Vector3 = Vector3((i - 1 - room_count / 2.0) * room_spacing, 0.0, -(i - 1) * room_spacing)
 			_create_tunnel(prev_pos, room_pos, chunk_origin)
-	
-	_notify_property_list_changed()
 
 func _clear_preview() -> void:
 	for child in _generated_children:
