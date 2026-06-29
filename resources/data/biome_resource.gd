@@ -21,6 +21,7 @@ extends Resource
 
 ## ─── Contenido ──────────────────────────────────────
 @export var mineral_table: Array[MineralSpawnEntry] = []
+@export var room_templates: Array[RoomTemplate] = []
 @export var room_scenes: Array[PackedScene] = []
 @export var tunnel_scene: PackedScene
 

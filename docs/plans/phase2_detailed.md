@@ -224,9 +224,9 @@ Registrar como autoload en `project.godot`.
 Crear `scripts/environment/biome_selector.gd`:
 ```
 func get_biome_at_depth(depth: int) -> BiomeResource:
-    # Lógica: depth 0 = surface, 1-3 = shallow, 4-5 = crystal, etc.
-    # Cargar el .tres correspondiente
-    # Retornar fallback a shallow si no se encuentra
+	# Lógica: depth 0 = surface, 1-3 = shallow, 4-5 = crystal, etc.
+	# Cargar el .tres correspondiente
+	# Retornar fallback a shallow si no se encuentra
 ```
 
 Integrar con `GameState.change_depth()` para actualizar bioma actual.
@@ -242,14 +242,14 @@ Integrar con `GameState.change_depth()` para actualizar bioma actual.
 Crear `scripts/environment/room_spawner.gd`:
 ```
 func spawn_room(template: RoomTemplate, position: Vector3, parent: Node3D) -> Node3D:
-    # Instanciar template.scene
-    # Posicionar en parent
-    # Registrar en generated_chunks
-    # Retornar la instancia
+	# Instanciar template.scene
+	# Posicionar en parent
+	# Registrar en generated_chunks
+	# Retornar la instancia
 
 func connect_rooms(room_a: Node3D, room_b: Node3D) -> void:
-    # Crear túnel entre entry_points
-    # Usar tunnel_scene del bioma
+	# Crear túnel entre entry_points
+	# Usar tunnel_scene del bioma
 ```
 
 **Archivos:** `scripts/environment/room_spawner.gd`
@@ -263,12 +263,12 @@ func connect_rooms(room_a: Node3D, room_b: Node3D) -> void:
 Crear `scripts/environment/mineral_spawner.gd`:
 ```
 func spawn_minerals_in_room(room: Node3D, biome: BiomeResource) -> Array[Node3D]:
-    # Obtener SpawnPoints de la sala
-    # Para cada SpawnPoint, elegir mineral de biome.mineral_table
-    # Usar weight para probabilidad
-    # Instanciar mineral_node.tscn
-    # Configurar con MineralResource
-    # Retornar array de minerales spawneados
+	# Obtener SpawnPoints de la sala
+	# Para cada SpawnPoint, elegir mineral de biome.mineral_table
+	# Usar weight para probabilidad
+	# Instanciar mineral_node.tscn
+	# Configurar con MineralResource
+	# Retornar array de minerales spawneados
 ```
 
 **Archivos:** `scripts/environment/mineral_spawner.gd`
@@ -282,10 +282,10 @@ func spawn_minerals_in_room(room: Node3D, biome: BiomeResource) -> Array[Node3D]
 Crear `scripts/environment/hazard_spawner.gd`:
 ```
 func spawn_hazards_in_room(room: Node3D, biome: BiomeResource) -> Array[Node3D]:
-    # Verificar biome.hazard_chance
-    # Seleccionar tipo de hazard (spike_trap, falling_rocks, gas_leak)
-    # Instanciar hazard.gd con configuración del bioma
-    # Retornar array
+	# Verificar biome.hazard_chance
+	# Seleccionar tipo de hazard (spike_trap, falling_rocks, gas_leak)
+	# Instanciar hazard.gd con configuración del bioma
+	# Retornar array
 ```
 
 **Archivos:** `scripts/environment/hazard_spawner.gd`
@@ -299,10 +299,10 @@ func spawn_hazards_in_room(room: Node3D, biome: BiomeResource) -> Array[Node3D]:
 Crear `scripts/environment/chunk_manager.gd`:
 ```
 func _on_player_depth_changed(new_depth: int) -> void:
-    # Calcular chunks visibles
-    # Generar chunks nuevos
-    # Descargar chunks lejanos
-    # Mantener memoria bajo control
+	# Calcular chunks visibles
+	# Generar chunks nuevos
+	# Descargar chunks lejanos
+	# Mantener memoria bajo control
 ```
 
 Conectar a `GameState.depth_changed`.
@@ -339,10 +339,10 @@ Modificar `scripts/environment/cave_exit.gd`:
 Crear `scripts/environment/biome_applier.gd`:
 ```
 func apply_biome(biome: BiomeResource) -> void:
-    # WorldEnvironment: ambient_color, ambient_energy
-    # Fog: fog_color, fog_density
-    # Sky: cambiar si es necesario
-    # Transición tween de 2s entre biomas
+	# WorldEnvironment: ambient_color, ambient_energy
+	# Fog: fog_color, fog_density
+	# Sky: cambiar si es necesario
+	# Transición tween de 2s entre biomas
 ```
 
 **Archivos:** `scripts/environment/biome_applier.gd`
@@ -359,15 +359,15 @@ var current_biome: BiomeResource
 var target_biome: BiomeResource
 
 func _on_depth_changed(new_depth: int) -> void:
-    target_biome = BiomeSelector.get_biome_at_depth(new_depth)
-    if target_biome != current_biome:
-        _start_transition()
+	target_biome = BiomeSelector.get_biome_at_depth(new_depth)
+	if target_biome != current_biome:
+		_start_transition()
 
 func _start_transition() -> void:
-    # Fade out visual actual
-    # Aplicar nuevo bioma
-    # Fade in
-    # Emitir señal biome_changed
+	# Fade out visual actual
+	# Aplicar nuevo bioma
+	# Fade in
+	# Emitir señal biome_changed
 ```
 
 **Archivos:** `scripts/environment/biome_transition_detector.gd`
@@ -437,18 +437,18 @@ enum HorrorEvent { NONE, WHISPER, SHADOW, FOOTSTEPS, BREATHING, JUMPSCARE }
 
 var phase: HorrorPhase = HorrorPhase.NONE
 var phase_thresholds: Dictionary = {
-    HorrorPhase.NONE: 0,       # Depth 0-3
-    HorrorPhase.LATENT: 4,     # Depth 4-5
-    HorrorPhase.STALKING: 7,   # Depth 7-8
-    HorrorPhase.HUNTING: 9     # Depth 9-10
+	HorrorPhase.NONE: 0,       # Depth 0-3
+	HorrorPhase.LATENT: 4,     # Depth 4-5
+	HorrorPhase.STALKING: 7,   # Depth 7-8
+	HorrorPhase.HUNTING: 9     # Depth 9-10
 }
 
 func _on_depth_changed(new_depth: int) -> void:
-    # Evaluar si cambiar de fase
-    # Emitir horror_phase_changed
+	# Evaluar si cambiar de fase
+	# Emitir horror_phase_changed
 
 func trigger_horror_event(event: HorrorEvent) -> void:
-    # Ejecutar efecto visual/audio
+	# Ejecutar efecto visual/audio
 ```
 
 **Archivos:** `scripts/horror/horror_phase_manager.gd`
@@ -477,15 +477,15 @@ Crear `scripts/horror/horror_event_system.gd`:
 Crear `scripts/horror/horror_atmosphere.gd`:
 ```
 func apply_horror_atmosphere(phase: HorrorPhase) -> void:
-    match phase:
-        NONE:
-            # Normal
-        LATENT:
-            # Niebla ligera, sonidos distantes
-        STALKING:
-            # Oscuridad incremental, sonidos cercanos
-        HUNTING:
-            # Oscuridad total, música intensa
+	match phase:
+		NONE:
+			# Normal
+		LATENT:
+			# Niebla ligera, sonidos distantes
+		STALKING:
+			# Oscuridad incremental, sonidos cercanos
+		HUNTING:
+			# Oscuridad total, música intensa
 ```
 
 **Archivos:** `scripts/horror/horror_atmosphere.gd`
@@ -517,17 +517,17 @@ Crear `scripts/horror/cursed_mineral_event.gd`:
 Crear `scripts/autoload/lighting_manager.gd`:
 ```
 func setup_biome_lighting(biome: BiomeResource) -> void:
-    # Configurar WorldEnvironment
-    # Ambient light
-    # Fog
-    # Tonemap
+	# Configurar WorldEnvironment
+	# Ambient light
+	# Fog
+	# Tonemap
 
 func add_point_light(position: Vector3, color: Color, energy: float, range: float) -> void:
-    # Instanciar OmniLight3D
-    # Configurar y añadir a escena
+	# Instanciar OmniLight3D
+	# Configurar y añadir a escena
 
 func add_torch(position: Vector3) -> void:
-    # Antorcha con luz naranja parpadeante
+	# Antorcha con luz naranja parpadeante
 ```
 
 Registrar como autoload.
@@ -548,12 +548,12 @@ extends Node3D
 @export var flicker_amount: float = 0.2
 
 func _ready():
-    # Crear OmniLight3D
-    # Crear Particles3D (humo)
-    # Iniciar parpadeo
+	# Crear OmniLight3D
+	# Crear Particles3D (humo)
+	# Iniciar parpadeo
 
 func _process(delta):
-    # Parpadeo sinusoidal con ruido
+	# Parpadeo sinusoidal con ruido
 ```
 
 Crear `scenes/environment/torch.tscn`.
@@ -574,8 +574,8 @@ extends MeshInstance3D
 @export var pulse_amount: float = 0.3
 
 func _process(delta):
-    # Pulso sinusoidal en emission
-    # Actualizar material override
+	# Pulso sinusoidal en emission
+	# Actualizar material override
 ```
 
 Integrar con cristales en bioma Crystal.
@@ -613,10 +613,10 @@ Crear efectos de partículas:
 Crear `scripts/ui/post_processing.gd`:
 ```
 func apply_biome_post_processing(biome: BiomeResource) -> void:
-    # Ajustar CompositorEffect según bioma
-    # Bloom: más en Crystal, menos en Deep
-    # Vignette: más en horror phases
-    # Color grading: tinte por bioma
+	# Ajustar CompositorEffect según bioma
+	# Bloom: más en Crystal, menos en Deep
+	# Vignette: más en horror phases
+	# Color grading: tinte por bioma
 ```
 
 Crear recursos de Compositor para cada bioma.
@@ -636,16 +636,16 @@ Crear recursos de Compositor para cada bioma.
 Crear `scripts/audio/biome_audio_manager.gd`:
 ```
 func play_biome_music(biome: BiomeResource) -> void:
-    # Crossfade entre tracks
-    # Fade out actual, fade in nuevo
+	# Crossfade entre tracks
+	# Fade out actual, fade in nuevo
 
 func play_ambient_sfx(biome: BiomeResource) -> void:
-    # Loop de SFX ambiental por bioma
-    # Shallow: gotas de agua
-    # Crystal: campanas de viento
-    # Abandoned: crujidos de madera
-    # Deep: respiración lejana
-    # Cursed: susurros
+	# Loop de SFX ambiental por bioma
+	# Shallow: gotas de agua
+	# Crystal: campanas de viento
+	# Abandoned: crujidos de madera
+	# Deep: respiración lejana
+	# Cursed: susurros
 ```
 
 **Archivos:** `scripts/audio/biome_audio_manager.gd`

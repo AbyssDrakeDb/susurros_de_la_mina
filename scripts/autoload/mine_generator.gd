@@ -194,24 +194,46 @@ func _get_chunk_seed(depth: int) -> int:
 	return depth * 7919 + 31337
 
 func _pick_room_template(biome: BiomeResource, depth: int) -> RoomTemplate:
-	if biome == null or biome.room_scenes.is_empty():
+	if biome == null:
 		return _create_fallback_template(depth)
 	
-	var valid_rooms: Array[PackedScene] = []
-	for scene in biome.room_scenes:
-		if scene != null:
-			valid_rooms.append(scene)
+	if not biome.room_templates.is_empty():
+		return _weighted_select_template(biome.room_templates, biome, depth)
 	
-	if valid_rooms.is_empty():
+	if not biome.room_scenes.is_empty():
+		var chosen_scene: PackedScene = biome.room_scenes[_rng.randi() % biome.room_scenes.size()]
+		if chosen_scene != null:
+			var template: RoomTemplate = RoomTemplate.new()
+			template.room_id = "room_%d_%d" % [depth, _rng.randi()]
+			template.scene = chosen_scene
+			template.biome = biome
+			template.min_depth = biome.depth_min
+			template.max_depth = biome.depth_max
+			return template
+	
+	return _create_fallback_template(depth)
+
+func _weighted_select_template(templates: Array[RoomTemplate], biome: BiomeResource, depth: int) -> RoomTemplate:
+	var total_weight: float = 0.0
+	var valid: Array[RoomTemplate] = []
+	
+	for t in templates:
+		if t != null and t.scene != null:
+			valid.append(t)
+			total_weight += t.weight
+	
+	if valid.is_empty():
 		return _create_fallback_template(depth)
 	
-	var template: RoomTemplate = RoomTemplate.new()
-	template.room_id = "room_%d_%d" % [depth, _rng.randi()]
-	template.scene = valid_rooms[_rng.randi() % valid_rooms.size()]
-	template.biome = biome
-	template.min_depth = biome.depth_min
-	template.max_depth = biome.depth_max
-	return template
+	var roll: float = _rng.randf() * total_weight
+	var cumulative: float = 0.0
+	
+	for t in valid:
+		cumulative += t.weight
+		if roll < cumulative:
+			return t
+	
+	return valid[valid.size() - 1]
 
 func _create_fallback_template(depth: int) -> RoomTemplate:
 	var template: RoomTemplate = RoomTemplate.new()

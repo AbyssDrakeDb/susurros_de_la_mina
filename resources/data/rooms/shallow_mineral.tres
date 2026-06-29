@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="RoomTemplate" format=3]
+
+[ext_resource type="Script" path="res://resources/data/room_template.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/environment/cave_room.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+room_id = "shallow_mineral_1"
+scene = ExtResource("2")
+room_type = 1
+min_depth = 1
+max_depth = 3
+weight = 1.0
