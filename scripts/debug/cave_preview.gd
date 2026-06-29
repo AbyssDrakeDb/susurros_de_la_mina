@@ -217,7 +217,7 @@ func _create_minerals_debug(pos: Vector3, room_index: int) -> void:
 		mineral.name = "Mineral_%s_%d" % [mineral_type, i]
 		mineral.position = mineral_pos
 		
-		var crystal_mesh: PrismMesh.new()
+		var crystal_mesh: PrismMesh = PrismMesh.new()
 		crystal_mesh.size = Vector3(0.8, 1.5, 0.8)
 		mineral.mesh = crystal_mesh
 		
