@@ -5,6 +5,7 @@ class_name MineGeneratorClass
 @export var chunk_size: int = 30
 @export var render_distance: int = 2
 @export var mine_depth: int = 10
+@export_range(0.01, 1.0, 0.01) var cave_scale: float = 0.06
 
 ## ─── Sub-sistemas ────────────────────────────────────
 var biome_selector: BiomeSelectorClass
@@ -19,6 +20,11 @@ var generated_chunks: Dictionary = {}
 var is_initialized: bool = false
 var chunk_container: Node3D = null
 
+## ─── CavePathData ─────────────────────────────────────
+var _cave_path: CavePathData = null
+var _cave_pieces: Array[Node3D] = []
+var _cave_scene: PackedScene = null
+
 ## ─── RNG ─────────────────────────────────────────────
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
@@ -30,6 +36,8 @@ signal biome_changed(biome: BiomeResource)
 ## ─── Godot Callbacks ──────────────────────────────────
 func _ready() -> void:
 	_setup_subsystems()
+	_cave_path = CavePathData.from_cave_example()
+	_cave_scene = load("res://scenes/environment/cave_example.tscn") as PackedScene
 	GameState.depth_changed.connect(_on_depth_changed)
 	is_initialized = true
 
@@ -60,6 +68,41 @@ func setup(container: Node3D) -> void:
 	chunk_container = container
 	chunk_manager.set_chunk_container(container)
 
+func generate_full_cave(parent: Node3D) -> Node3D:
+	if _cave_path == null or _cave_path.pieces.is_empty():
+		return null
+	
+	var cave_root: Node3D = Node3D.new()
+	cave_root.name = "ProceduralCave"
+	parent.add_child(cave_root)
+	cave_root.owner = parent.owner
+	
+	var current_pos: Vector3 = Vector3.ZERO
+	
+	for i in range(_cave_path.pieces.size()):
+		var piece_data: Dictionary = _cave_path.pieces[i]
+		var rel_pos: Vector3 = piece_data["relative_pos"] * cave_scale
+		current_pos += rel_pos
+		
+		var level: int = piece_data["depth_level"]
+		var biome: BiomeResource = biome_selector.get_biome_at_depth(level)
+		
+		var template: RoomTemplate = _pick_room_template(biome, level)
+		var room: Node3D = room_spawner.spawn_room(template, current_pos, cave_root)
+		if room == null:
+			continue
+		
+		mineral_spawner.spawn_minerals_in_room(room, biome)
+		hazard_spawner.spawn_hazards_in_room(room, biome)
+	
+	return cave_root
+
+func get_cave_path() -> CavePathData:
+	return _cave_path
+
+func get_cave_scale() -> float:
+	return cave_scale
+
 func generate_chunk(depth: int, parent: Node3D = null) -> Node3D:
 	_rng.seed = _get_chunk_seed(depth)
 	
@@ -71,6 +114,36 @@ func generate_chunk(depth: int, parent: Node3D = null) -> Node3D:
 	
 	var biome: BiomeResource = biome_selector.get_biome_at_depth(depth)
 	
+	if _cave_path != null and not _cave_path.pieces.is_empty():
+		_generate_cave_path_chunk(chunk, biome, depth)
+	else:
+		_generate_fallback_chunk(chunk, biome, depth)
+	
+	chunk_generated.emit(depth)
+	return chunk
+
+func _generate_cave_path_chunk(chunk: Node3D, biome: BiomeResource, depth: int) -> void:
+	var piece_count: int = _rng.randi_range(3, 6)
+	var start_piece: int = _rng.randi_range(0, maxi(0, _cave_path.pieces.size() - piece_count))
+	
+	var current_pos: Vector3 = Vector3.ZERO
+	
+	for i in range(piece_count):
+		var piece_idx: int = (start_piece + i) % _cave_path.pieces.size()
+		var piece_data: Dictionary = _cave_path.pieces[piece_idx]
+		
+		var rel_pos: Vector3 = piece_data["relative_pos"] * cave_scale
+		current_pos += rel_pos
+		
+		var template: RoomTemplate = _pick_room_template(biome, depth)
+		var room: Node3D = room_spawner.spawn_room(template, current_pos, chunk)
+		if room == null:
+			continue
+		
+		mineral_spawner.spawn_minerals_in_room(room, biome)
+		hazard_spawner.spawn_hazards_in_room(room, biome)
+
+func _generate_fallback_chunk(chunk: Node3D, biome: BiomeResource, depth: int) -> void:
 	var room_count: int = _rng.randi_range(2, 4)
 	var room_spacing: float = chunk_size / float(room_count)
 	
@@ -92,9 +165,6 @@ func generate_chunk(depth: int, parent: Node3D = null) -> Node3D:
 			room_spawner.connect_rooms(last_room, room, biome.tunnel_scene if biome else null)
 		
 		last_room = room
-	
-	chunk_generated.emit(depth)
-	return chunk
 
 func get_biome_at_depth(depth: int) -> BiomeResource:
 	return biome_selector.get_biome_at_depth(depth)
