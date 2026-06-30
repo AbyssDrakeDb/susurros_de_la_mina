@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://bq0y8i5tsnksu"]
 
 [ext_resource type="PackedScene" uid="uid://dosev8p2clkxi" path="res://scenes/npc/npc.tscn" id="1"]
-[ext_resource type="Script" uid="uid://iokg8oi60372" path="res://scripts/environment/cave_entrance.gd" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4"]
 
@@ -55,7 +54,6 @@ transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 5.77
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -8)
 collision_layer = 8
 collision_mask = 2
-script = ExtResource("2")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CaveEntrance" unique_id=1895507454]
 shape = SubResource("SubResource_cave_entrance")
