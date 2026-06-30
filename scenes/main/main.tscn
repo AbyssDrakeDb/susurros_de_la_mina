@@ -3,19 +3,6 @@
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="3"]
 [ext_resource type="PackedScene" uid="uid://b8w2j1k5n3r7" path="res://scenes/minerals/mineral_node.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://scenes/environment/cave_room.tscn" id="5"]
-[ext_resource type="Script" uid="uid://dl4q1306whr18" path="res://scripts/environment/hazard.gd" id="7"]
-[ext_resource type="Script" uid="uid://d0d17715rmfph" path="res://scripts/environment/cave_exit.gd" id="8"]
-[ext_resource type="Script" uid="uid://d2h3ifc0o5f6x" path="res://scripts/environment/cave_scene_setup.gd" id="9"]
-
-[sub_resource type="BoxShape3D" id="SubResource_exit"]
-size = Vector3(5, 4, 3)
-
-[sub_resource type="BoxMesh" id="SubResource_exit_mesh"]
-size = Vector3(5, 4, 3)
-
-[sub_resource type="StandardMaterial3D" id="SubResource_exit_mat"]
-albedo_color = Color(0.3, 0.3, 0.25, 1)
 
 [sub_resource type="BoxShape3D" id="SubResource_hazard"]
 size = Vector3(2, 1, 2)
@@ -27,27 +14,6 @@ size = Vector3(2, 0.5, 2)
 albedo_color = Color(0.6, 0.2, 0.1, 1)
 
 [node name="Main" type="Node3D" unique_id=231579914]
-script = ExtResource("9")
-
-[node name="CaveRoom" parent="." unique_id=256983870 instance=ExtResource("5")]
-
-[node name="CaveExit" type="Area3D" parent="." unique_id=145118518]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 5)
-collision_layer = 8
-collision_mask = 2
-script = ExtResource("8")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CaveExit" unique_id=1993816058]
-shape = SubResource("SubResource_exit")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CaveExit" unique_id=812512652]
-mesh = SubResource("SubResource_exit_mesh")
-surface_material_override/0 = SubResource("SubResource_exit_mat")
-
-[node name="Label3D" type="Label3D" parent="CaveExit" unique_id=497210362]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
-visible = false
-text = "Presiona E para salir"
 
 [node name="Player" parent="." unique_id=1042402742 instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
@@ -126,7 +92,6 @@ max_health = 175
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, -6)
 collision_layer = 0
 collision_mask = 2
-script = ExtResource("7")
 damage_amount = 15
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hazards/SpikeTrap1" unique_id=870561090]
@@ -149,7 +114,6 @@ font_size = 24
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.25, -9)
 collision_layer = 0
 collision_mask = 2
-script = ExtResource("7")
 damage_amount = 20
 damage_interval = 0.8
 
@@ -173,7 +137,6 @@ font_size = 24
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 0.25, -13)
 collision_layer = 0
 collision_mask = 2
-script = ExtResource("7")
 damage_amount = 25
 damage_interval = 0.6
 

@@ -90,16 +90,16 @@
 
 ---
 
-## FASE 2: Profundidad y Atmósfera (4-5 meses) 🔲 PENDIENTE
+## FASE 2: Profundidad y Atmósfera (4-5 meses) ✅ EN PROGRESO (11/32 tareas · +9 bugs corregidos)
 
 ### 2.A — Data Layer: Recursos y Configuración
 
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
 | 2.A.1 | MineralResource (Custom Resource) | 🔲 | class_name con health, rarity, depth, mesh |
-| 2.A.2 | BiomeResource (Custom Resource) | 🔲 | 6 biomas: surface, shallow, crystal, abandoned, deep, cursed |
-| 2.A.3 | MineralSpawnEntry (Resource auxiliar) | 🔲 | Peso de spawn por mineral en cada bioma |
-| 2.A.4 | RoomTemplate (Custom Resource) | 🔲 | 5 tipos: entrance, mineral, story, challenge, boss |
+| 2.A.2 | BiomeResource (Custom Resource) | ✅ | 6 biomas: surface, shallow, crystal, abandoned, deep, cursed |
+| 2.A.3 | MineralSpawnEntry (Resource auxiliar) | ✅ | Peso de spawn por mineral en cada bioma |
+| 2.A.4 | RoomTemplate (Custom Resource) | ✅ | 5 tipos: entrance, mineral, story, challenge, boss |
 | 2.A.5 | Crear Room Templates Base | 🔲 | 8 escenas prefabricadas por bioma/tipo |
 | 2.A.6 | Actualizar MineralNode para MineralResource | 🔲 | Data-driven stats desde Resource |
 
@@ -107,19 +107,19 @@
 
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
-| 2.B.1 | MineGenerator Core (Autoload) | 🔲 | generate_chunk(), get_biome_at_depth() |
-| 2.B.2 | BiomeSelector (Lógica por Profundidad) | 🔲 | Mapeo depth→biome, integrar con GameState |
-| 2.B.3 | RoomSpawner (Colocación de Salas) | 🔲 | Instanciar templates, conectar con túneles |
-| 2.B.4 | MineralSpawner (Población de Minerales) | 🔲 | Spawn por peso de bioma, tipos correctos |
-| 2.B.5 | HazardSpawner (Trampas por Bioma) | 🔲 | Chance por bioma, daño escalado |
-| 2.B.6 | ChunkManager (Carga/Descarga) | 🔲 | Render distance, limpieza de memoria |
-| 2.B.7 | Integrar MineGenerator con CaveEntrance | 🔲 | Flujo Surface→Cave→Profundizar |
+| 2.B.1 | MineGenerator Core (Autoload) | ✅ | generate_chunk(), get_biome_at_depth(), generate_path() |
+| 2.B.2 | BiomeSelector (Lógica por Profundidad) | ✅ | Mapeo depth→biome, integrado con GameState |
+| 2.B.3 | RoomSpawner (Colocación de Salas) | ✅ | Instanciar templates, conectar con túneles |
+| 2.B.4 | MineralSpawner (Población de Minerales) | ✅ | Spawn por peso de bioma, tipos correctos |
+| 2.B.5 | HazardSpawner (Trampas por Bioma) | ✅ | Chance por bioma, daño escalado |
+| 2.B.6 | ChunkManager (Carga/Descarga) | ✅ | Render distance, limpieza de memoria con validación |
+| 2.B.7 | Integrar MineGenerator con CaveEntrance | ✅ | Flujo Surface→Cave→Profundizar con conexión GameState |
 
 ### 2.C — Sistema de Biomas: Visuales y Transiciones
 
 | # | Tarea | Estado | Notas |
 |---|-------|--------|-------|
-| 2.C.1 | BiomeApplier (Aplicar Visual) | 🔲 | WorldEnvironment, fog, ambient por bioma |
+| 2.C.1 | BiomeApplier (Aplicar Visual) | ✅ | cave_scene_setup aplica ambient_color, fog, density al WorldEnvironment |
 | 2.C.2 | BiomeTransitionDetector | 🔲 | Fade in/out entre biomas, sin parpadeos |
 | 2.C.3 | Crear Materiales por Bioma | 🔲 | 5 materiales base, colores y roughness |
 | 2.C.4 | BiomeDecorations (Props) | 🔲 | Decoración por bioma con assets existentes |
@@ -164,7 +164,43 @@
 | 2.H.2 | Balance y Tuning | 🔲 | Ajustar valores post-testing |
 | 2.H.3 | Build para itch.io | 🔲 | Windows + Web, subir demo |
 
-**Estado: 🔲 PENDIENTE (0/32 tareas)**
+**Estado: ✅ EN PROGRESO (11/32 tareas)**
+
+---
+
+### 2.X — Bugs Corregidos en Generación Procedural (29 Jun 2026 — Sesión 2)
+
+| # | Problema | Archivo | Fix |
+|---|----------|---------|-----|
+| 1 | `global_position` en nodos fuera del árbol | `room_spawner.gd` | Cambiar a `position` |
+| 2 | `look_at()` antes de `add_child()` | `room_spawner.gd` | Reordenar: add_child → look_at |
+| 3 | Chunks no añadidos al árbol | `mine_generator.gd` | Parámetro `parent` en generate_chunk() |
+| 4 | Referencias stale tras cambio escena | `chunk_manager.gd` | `_is_container_valid()` |
+| 5 | `global_transform` en nodos no en árbol | `generate_collisions.gd` | Doble await + is_inside_tree |
+| 6 | Nodo "Chunks" huérfano en re-entrada | `cave_scene_setup.gd` | has_node check antes de crear |
+| 7 | Contenido artesanal superpuesto | `cave_scene_setup.gd` | Añadir "CaveRoom" a limpieza |
+| 8 | Túneles BoxShape3D injugables | `room_spawner.gd` | SurfaceTool con malla tubo irregular |
+| 9 | Piezas de cueva NO conectadas (gap visible) | `modular_cave_generator.gd`, `mine_generator.gd` | Piezas tienen escala 0.5 en .tscn pero PIECE_DATA usaba tamaño sin escalar → half_size 2x → posiciones duplicadas. Fix: añadir `scale: 0.5` a PIECE_DATA (salvo mine_01=1.0), calcular half_size como `size * scale * 0.5`, aplicar `body.scale` y resetear `visual.transform = IDENTITY` en `_instance_piece()` |
+| 9 | Colisión BoxShape3D atrapa jugador | `mine_generator.gd` | ConcavePolygonShape3D trimesh |
+| 10 | Piezas superpuestas entre chunks | `mine_generator.gd` | `_chunk_end` tracking |
+| 11 | Piezas dispersas por AABB | `modular_cave_generator.gd` | connection_offset auto-detect |
+| 12 | Conexión en eje incorrecto | `modular_cave_generator.gd` | connection_axis configurable |
+| 13 | Offsets aleatorios rompen alineación | `modular_cave_generator.gd` | Eliminar offsets aleatorios |
+| 14 | Campo de visión reducido | `player.tscn` | Camera3D.far 500→5000 |
+| 15 | Sistema modular no integrado | `mine_generator.gd` | Integrar ModularCaveGenerator |
+| 16 | Colisión trimesh costosa | `mine_generator.gd` | Cache _collision_cache por piece_id |
+| 17 | Sin restricciones consecutivas | `modular_cave_generator.gd` | _apply_consecutive_rules() |
+| 18 | Sin LOD | `mine_generator.gd` + `piece_lod.gd` | PieceLOD por distancia |
+| 19 | Pantalla de carga fija 5s | `cave_scene_setup.gd` | Condicional + dinámica en test_mode |
+| 20 | Sin integración visual biomas | `cave_scene_setup.gd` | _apply_biome_visuals() en setup |
+| 21 | const PIECE_DATA no modificable en runtime | `modular_cave_generator.gd` | Reemplazar PIECE_DATA con _offset_cache |
+| 22 | Auto-detect de offsets retornaba 0 (ningún bin vacío) | `modular_cave_generator.gd` | Eliminar auto_detect; usar half_size = size/2 |
+| 23 | Jugador spawnea DENTRO del mesh de la primera pieza | `cave_scene_setup.gd` + `mine_generator.gd` | start_offset = half_first + 50; instance_path() con offset |
+| 24 | ConcavePolygonShape3D no detecta colisión desde el interior | `mine_generator.gd` | safety floor (BoxShape3D bajo el jugador) |
+| 25 | generate_path() llamado 2 veces daba paths distintos | `cave_scene_setup.gd` + `mine_generator.gd` | instance_path() público + generar path 1 vez |
+| 26 | connection_axis inconsistente ("X" vs "Z") | `modular_cave_generator.gd` + `cave_scene_setup.gd` | Unificar default a "X" en todos los módulos |
+| 27 | surface_get_arrays() retorna Array no Dictionary | `modular_cave_generator.gd` | Tipo PackedVector3Array[] + acceso con [] |
+| 28 | _scene tipado como Node recibía PackedScene | `cave_connection_analyzer.gd` | Cambiar tipo a PackedScene |
 
 ---
 
@@ -210,16 +246,16 @@
 |------|--------|----------|----------------|
 | Fase 0: Preparación | ✅ COMPLETADA | 18/18 (100%) | `phase0_detailed.md` |
 | Fase 1: Prototipo Mínimo | ✅ COMPLETADA | 20/20 (100%) | `phase1_detailed.md` |
-| Fase 2: Profundidad | 🔲 PENDIENTE | 0/32 (0%) | `phase2_detailed.md` |
+| Fase 2: Profundidad | ✅ EN PROGRESO | 11/32 (34%) | `phase2_detailed.md` |
 | Fase 3: Horror | 🔲 PENDIENTE | 0/8 (0%) | `phase3_detailed.md` |
 | Fase 4: Lanzamiento | 🔲 PENDIENTE | 0/8 (0%) | `phase4_detailed.md` |
-| **TOTAL** | ✅ | **38/86 (44%)** | |
+| **TOTAL** | ✅ | **49/86 (57%)** | |
 
 ---
 
 ## Última Actualización
-- **Fecha**: 27 de Junio, 2026
-- **Fase actual**: Fase 2 - Profundidad y Atmósfera (pendiente)
-- **Siguiente tarea**: 2.A.1 - MineralResource
-- **Planes detallados**: `docs/plans/phase{0-4}_detailed.md`
+- **Fecha**: 29 de Junio, 2026
+- **Fase actual**: Fase 2 - Profundidad y Atmósfera (en progreso)
+- **Siguiente tarea**: 2.A.1 - MineralResource / 2.A.5 - Room Templates
+- **Planes detallados**: `docs/plans/phase{0-4}_detailed.md`, `docs/godot-prompter/plans/problemas-generacion-cuevas.md`
 - **Tag actual**: v0.3.0-alpha (Fase 1 completa)
